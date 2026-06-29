@@ -16,9 +16,27 @@
   100%{transform:scaleY(0);transform-origin:bottom}
 }
 
+/* =========================================================
+   HERO INTRO: scroll-driven word reveal
+   ========================================================= */
+body.hero-lock{overflow:hidden}
+.hero h1 .word{display:inline-block;opacity:0;transform:translateY(16px);
+  transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.hero h1 .word.in{opacity:1;transform:none}
+.hero-rest{opacity:0;transform:translateY(18px);
+  transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
+.hero-rest.in{opacity:1;transform:none}
+.hero-scroll{opacity:0;transition:opacity .6s var(--ease)}
+.hero-scroll.show{opacity:1}
+.no-js .hero h1 .word,.no-js .hero-rest{opacity:1!important;transform:none!important}
+.no-js .hero-scroll{display:none}
+
 /* respect user motion preference everywhere */
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition-duration:.01ms!important}
   .reveal{opacity:1;transform:none}
   html{scroll-behavior:auto}
+  .hero h1 .word,.hero-rest{opacity:1!important;transform:none!important}
+  .hero-scroll{display:none!important}
+  body.hero-lock{overflow:auto}
 }
