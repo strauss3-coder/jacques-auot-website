@@ -18,7 +18,7 @@ sitemap.xml           XML sitemap of all public pages
 site.webmanifest       PWA manifest (primary)
 manifest.webmanifest  PWA manifest (alias, same content)
 browserconfig.xml      Windows tile config
-favicon.ico, CNAME, .nojekyll
+favicon.ico, .nojekyll
 
 assets/
   css/    main.css (tokens + components), animations.css (reveal/keyframes), responsive.css (media queries)
@@ -40,12 +40,12 @@ python3 -m http.server 8000
 
 1. Push this repo to GitHub.
 2. Repo Settings → Pages → Source: deploy from the `main` branch, root folder.
-3. Update `CNAME` with your real domain (currently a placeholder: `jacquesauto.com`) and add the matching A/CNAME DNS records at your registrar.
+3. To use a custom domain, add a `CNAME` file at the repo root containing just the domain (e.g. `jacquesauto.com`) and add the matching A/CNAME DNS records at your registrar. There's currently no `CNAME` file, so the site will serve from the default `*.github.io` URL until one is added.
 4. Once live, submit `sitemap.xml` in Google Search Console and request indexing.
 
 ## Before going live (manual tasks)
 
-- [ ] Confirm `jacquesauto.com` is the real domain, or replace `CNAME` and all canonical/OG URLs (currently hardcoded to `https://jacquesauto.com`).
+- [ ] Confirm `jacquesauto.com` is the real domain. All canonical/OG URLs and `robots.txt`/`sitemap.xml` are currently hardcoded to `https://jacquesauto.com` even though no `CNAME` file exists yet — add the `CNAME` file once the domain is confirmed, or update those URLs to match wherever the site actually ends up hosted.
 - [ ] Replace placeholder vehicle prices/mileage in `inventory.html`'s "More on the lot" section with real listings (those cards use real photos from `assets/images/inventory/` but no price data was provided).
 - [ ] Swap `assets/images/hero-bg.jpg` and vehicle photos for current, high-resolution stock photography. A real hero photo (`hero-background-source.webp`) was found in the original assets and is included but not wired in — review and swap in if preferred.
 - [ ] Replace the placeholder Google Maps embed query in the `.map iframe` (in `contact.html`, `about.html`, `index.html`) with a verified Google Maps place link.
