@@ -159,10 +159,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
    ========================================================= */
 .carousel{position:relative}
 .carousel-track{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;
-  scroll-behavior:smooth;-webkit-overflow-scrolling:touch;padding:4px 4px 16px;scrollbar-width:none}
-.carousel-track::-webkit-scrollbar{display:none}
+  scroll-behavior:smooth;-webkit-overflow-scrolling:touch;padding:4px 4px 20px;
+  scrollbar-width:thin;scrollbar-color:var(--red) var(--border)}
+.carousel-track::-webkit-scrollbar{height:8px}
+.carousel-track::-webkit-scrollbar-track{background:var(--border);border-radius:99px}
+.carousel-track::-webkit-scrollbar-thumb{background:var(--red);border-radius:99px}
+.carousel-track::-webkit-scrollbar-thumb:hover{background:var(--red-2)}
 .carousel-track:focus-visible{outline:2px solid var(--red);outline-offset:4px}
-.carousel-track .vcard{flex:0 0 auto;width:min(78vw,272px);scroll-snap-align:start}
+.carousel-track .vcard{flex:0 0 auto;width:270px;scroll-snap-align:start}
 .carousel-btn{position:absolute;top:42%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;
   background:rgba(255,255,255,.94);border:1px solid var(--border-2);display:grid;place-items:center;
   color:var(--graphite);cursor:pointer;box-shadow:var(--shadow);z-index:5;transition:.25s var(--ease)}
