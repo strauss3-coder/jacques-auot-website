@@ -11,6 +11,7 @@
   .finance-card{padding:36px}
   .stock-grid{grid-template-columns:repeat(2,1fr)}
   .section{padding:74px 0}
+  .carousel-btn{display:none}
 }
 @media(max-width:600px){
   .wrap{padding:0 18px}
