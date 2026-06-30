@@ -288,22 +288,284 @@
   </div>
 </section>
 
-<!-- ===================== GALLERY ===================== -->
-<section class="section lot" id="gallery" aria-labelledby="gallery-heading">
+<!-- ===================== SELL YOUR VEHICLE ===================== -->
+<section class="section sv-section" id="sell" aria-labelledby="sv-heading">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Gallery</span>
-      <h2 id="gallery-heading">The current specials.</h2>
-      <p>Browse this month&rsquo;s featured deals &mdash; tap any to enlarge.</p>
+      <div class="sv-badge">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Sell with Confidence
+      </div>
+      <h2 id="sv-heading">Sell Your Vehicle.</h2>
+      <p>Looking to sell or trade in your vehicle? Complete our quick valuation form and we&rsquo;ll provide a fair market-related offer. The more information you provide, the faster we can assist you.</p>
     </div>
-    <div class="gallery">
-      <div class="gal-item reveal" data-full="assets/images/vehicle-5-thumb.jpg"><img src="assets/images/vehicle-5-thumb.jpg" alt="Vehicles on the Jacques Auto lot" loading="lazy"></div>
-      <div class="gal-item reveal" data-full="assets/images/vehicle-2-thumb.jpg"><img src="assets/images/vehicle-2-thumb.jpg" alt="Ford Ranger special at Jacques Auto" loading="lazy"></div>
-      <div class="gal-item reveal" data-full="assets/images/vehicle-3-thumb.jpg"><img src="assets/images/vehicle-3-thumb.jpg" alt="Suzuki Ertiga special at Jacques Auto" loading="lazy"></div>
-      <div class="gal-item reveal" data-full="assets/images/vehicle-6-thumb.jpg"><img src="assets/images/vehicle-6-thumb.jpg" alt="Featured vehicle special at Jacques Auto" loading="lazy"></div>
-      <div class="gal-item reveal" data-full="assets/images/vehicle-5-full.jpg"><img src="assets/images/vehicle-5-full.jpg" alt="More vehicles at Jacques Auto" loading="lazy"></div>
-      <div class="gal-item reveal" data-full="assets/images/vehicle-4-thumb.jpg"><img src="assets/images/vehicle-4-thumb.jpg" alt="Isuzu KB250 special at Jacques Auto" loading="lazy"></div>
-    </div>
+
+    <div class="sv-layout">
+
+      <!-- ── LEFT: info cards ── -->
+      <div class="sv-info">
+        <div class="sv-card reveal">
+          <span class="sv-card-em" aria-hidden="true">🚗</span>
+          <div>
+            <h3>Fair Vehicle Valuations</h3>
+            <p>We assess every vehicle individually to provide competitive offers based on condition and market value.</p>
+          </div>
+        </div>
+        <div class="sv-card reveal" data-delay="1">
+          <span class="sv-card-em" aria-hidden="true">⚡</span>
+          <div>
+            <h3>Quick &amp; Hassle-Free</h3>
+            <p>Complete the form in just a few minutes and we&rsquo;ll contact you as soon as possible.</p>
+          </div>
+        </div>
+        <div class="sv-card reveal" data-delay="2">
+          <span class="sv-card-em" aria-hidden="true">🤝</span>
+          <div>
+            <h3>Trusted Local Dealership</h3>
+            <p>Serving the eMalahleni community with honest service and professional vehicle purchases.</p>
+          </div>
+        </div>
+        <div class="sv-checklist reveal" data-delay="3">
+          <h4>
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            What to send on WhatsApp
+          </h4>
+          <ul>
+            <li><span aria-hidden="true">📸</span> Front of the vehicle</li>
+            <li><span aria-hidden="true">📸</span> Rear of the vehicle</li>
+            <li><span aria-hidden="true">📸</span> Both sides</li>
+            <li><span aria-hidden="true">📸</span> Interior</li>
+            <li><span aria-hidden="true">📸</span> Dashboard showing mileage</li>
+            <li><span aria-hidden="true">📸</span> Engine bay (optional)</li>
+            <li><span aria-hidden="true">📸</span> Any damage or imperfections</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ── RIGHT: multi-step form ── -->
+      <div class="sv-form-wrap reveal" data-delay="1" id="svWrap">
+
+        <!-- trust badges -->
+        <div class="sv-trust">
+          <div class="sv-trust-badge">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Free Valuation
+          </div>
+          <div class="sv-trust-badge">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            No Obligation
+          </div>
+          <div class="sv-trust-badge">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            Fast Response
+          </div>
+        </div>
+
+        <!-- progress indicator -->
+        <nav class="sv-progress" id="svProgress" aria-label="Form steps">
+          <div class="sv-step sv-step--active" data-step="1">
+            <div class="sv-step-dot"><span>1</span></div>
+            <span class="sv-step-label">Vehicle</span>
+          </div>
+          <div class="sv-step-line"></div>
+          <div class="sv-step" data-step="2">
+            <div class="sv-step-dot"><span>2</span></div>
+            <span class="sv-step-label">Condition</span>
+          </div>
+          <div class="sv-step-line"></div>
+          <div class="sv-step" data-step="3">
+            <div class="sv-step-dot"><span>3</span></div>
+            <span class="sv-step-label">Seller</span>
+          </div>
+          <div class="sv-step-line"></div>
+          <div class="sv-step" data-step="4">
+            <div class="sv-step-dot"><span>4</span></div>
+            <span class="sv-step-label">Review</span>
+          </div>
+        </nav>
+
+        <!-- step 1: vehicle details -->
+        <div class="sv-panel sv-panel--active" data-step="1" id="sv-panel-1">
+          <h3 class="sv-panel-title">Vehicle Details</h3>
+          <div class="sv-grid">
+            <div class="sv-field">
+              <label for="sv-make">Make <span class="sv-req">*</span></label>
+              <input id="sv-make" type="text" placeholder="e.g. Toyota" autocomplete="off">
+            </div>
+            <div class="sv-field">
+              <label for="sv-model">Model <span class="sv-req">*</span></label>
+              <input id="sv-model" type="text" placeholder="e.g. Hilux" autocomplete="off">
+            </div>
+            <div class="sv-field">
+              <label for="sv-year">Year <span class="sv-req">*</span></label>
+              <input id="sv-year" type="number" placeholder="e.g. 2018" min="1980" max="2030" autocomplete="off">
+            </div>
+            <div class="sv-field">
+              <label for="sv-variant">Variant</label>
+              <input id="sv-variant" type="text" placeholder="e.g. 2.4 GD-6 4x4" autocomplete="off">
+            </div>
+            <div class="sv-field">
+              <label for="sv-mileage">Mileage (km)</label>
+              <input id="sv-mileage" type="text" placeholder="e.g. 120 000" autocomplete="off">
+            </div>
+            <div class="sv-field">
+              <label for="sv-colour">Colour</label>
+              <input id="sv-colour" type="text" placeholder="e.g. White" autocomplete="off">
+            </div>
+            <div class="sv-field">
+              <label for="sv-transmission">Transmission</label>
+              <select id="sv-transmission">
+                <option value="">Select&hellip;</option>
+                <option>Manual</option>
+                <option>Automatic</option>
+              </select>
+            </div>
+            <div class="sv-field">
+              <label for="sv-fuel">Fuel Type</label>
+              <select id="sv-fuel">
+                <option value="">Select&hellip;</option>
+                <option>Petrol</option>
+                <option>Diesel</option>
+                <option>Hybrid</option>
+                <option>Electric</option>
+              </select>
+            </div>
+          </div>
+          <div class="sv-btns sv-btns--end">
+            <button class="btn btn-primary sv-btn-next" type="button">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+
+        <!-- step 2: vehicle condition -->
+        <div class="sv-panel" data-step="2" id="sv-panel-2" aria-hidden="true">
+          <h3 class="sv-panel-title">Vehicle Condition</h3>
+          <div class="sv-grid">
+            <div class="sv-field">
+              <label for="sv-service">Service History</label>
+              <select id="sv-service">
+                <option value="">Select&hellip;</option>
+                <option>Full Service History</option>
+                <option>Partial Service History</option>
+                <option>No Service History</option>
+              </select>
+            </div>
+            <div class="sv-field">
+              <label for="sv-accident">Accident History</label>
+              <select id="sv-accident">
+                <option value="">Select&hellip;</option>
+                <option>No Accidents</option>
+                <option>Minor Accidents (repaired)</option>
+                <option>Major Accidents</option>
+              </select>
+            </div>
+            <div class="sv-field">
+              <label for="sv-mechanical">Mechanical Condition</label>
+              <select id="sv-mechanical">
+                <option value="">Select&hellip;</option>
+                <option>Excellent</option>
+                <option>Good</option>
+                <option>Fair</option>
+                <option>Needs Attention</option>
+              </select>
+            </div>
+            <div class="sv-field">
+              <label for="sv-exterior">Exterior Condition</label>
+              <select id="sv-exterior">
+                <option value="">Select&hellip;</option>
+                <option>Excellent</option>
+                <option>Good</option>
+                <option>Fair</option>
+                <option>Poor</option>
+              </select>
+            </div>
+            <div class="sv-field">
+              <label for="sv-interior">Interior Condition</label>
+              <select id="sv-interior">
+                <option value="">Select&hellip;</option>
+                <option>Excellent</option>
+                <option>Good</option>
+                <option>Fair</option>
+                <option>Poor</option>
+              </select>
+            </div>
+            <div class="sv-field">
+              <label for="sv-outstanding">Finance Outstanding</label>
+              <select id="sv-outstanding">
+                <option value="">Select&hellip;</option>
+                <option>No</option>
+                <option>Yes</option>
+              </select>
+            </div>
+            <div class="sv-field sv-field--full">
+              <label for="sv-price">Estimated Asking Price (R)</label>
+              <input id="sv-price" type="text" placeholder="e.g. R 150 000" autocomplete="off">
+            </div>
+            <div class="sv-field sv-field--full">
+              <label for="sv-comments">Additional Comments</label>
+              <textarea id="sv-comments" rows="3" placeholder="Any additional information about your vehicle&hellip;"></textarea>
+            </div>
+          </div>
+          <div class="sv-btns">
+            <button class="btn btn-ghost sv-btn-back" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Back</button>
+            <button class="btn btn-primary sv-btn-next" type="button">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+
+        <!-- step 3: seller information -->
+        <div class="sv-panel" data-step="3" id="sv-panel-3" aria-hidden="true">
+          <h3 class="sv-panel-title">Seller Information</h3>
+          <div class="sv-grid">
+            <div class="sv-field sv-field--full">
+              <label for="sv-name">Full Name <span class="sv-req">*</span></label>
+              <input id="sv-name" type="text" placeholder="Your full name" autocomplete="name">
+            </div>
+            <div class="sv-field">
+              <label for="sv-phone">Phone Number <span class="sv-req">*</span></label>
+              <input id="sv-phone" type="tel" placeholder="082 000 0000" autocomplete="tel">
+            </div>
+            <div class="sv-field">
+              <label for="sv-email">Email Address</label>
+              <input id="sv-email" type="email" placeholder="you@email.com" autocomplete="email">
+            </div>
+            <div class="sv-field sv-field--full">
+              <label for="sv-contact-pref">Preferred Contact Method</label>
+              <select id="sv-contact-pref">
+                <option value="">Select&hellip;</option>
+                <option>WhatsApp</option>
+                <option>Phone Call</option>
+                <option>Email</option>
+              </select>
+            </div>
+          </div>
+          <div class="sv-btns">
+            <button class="btn btn-ghost sv-btn-back" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Back</button>
+            <button class="btn btn-primary sv-btn-next" type="button">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+
+        <!-- step 4: review -->
+        <div class="sv-panel" data-step="4" id="sv-panel-4" aria-hidden="true">
+          <h3 class="sv-panel-title">Review Your Details</h3>
+          <div class="sv-review" id="sv-review"></div>
+          <div class="sv-photo-tip">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><circle cx="12" cy="16.5" r=".5" fill="currentColor" stroke="none"/></svg>
+            <p>To help us provide the most accurate valuation, please attach clear photos of your vehicle after opening WhatsApp. Photos of the exterior, interior, mileage and any damage are highly recommended.</p>
+          </div>
+          <div class="sv-response-banner">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            Most valuation requests receive a response within one business day.
+          </div>
+          <div class="sv-btns">
+            <button class="btn btn-ghost sv-btn-back" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Edit</button>
+            <a id="svSubmit" href="#" class="btn btn-wa" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.4 5 5.1-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8 1-.3.1-.5 0a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2a.4.4 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3A3 3 0 0 0 6 8.6c0 1.8 1.3 3.5 1.5 3.8s2.6 4 6.3 5.3c2.3.8 2.4.5 2.9.5a2.5 2.5 0 0 0 1.7-1.2 2 2 0 0 0 .1-1.2c0-.1-.2-.2-.4-.3z"/></svg>
+              Send Vehicle Details
+            </a>
+          </div>
+        </div>
+
+      </div><!-- /.sv-form-wrap -->
+    </div><!-- /.sv-layout -->
   </div>
 </section>
 
@@ -388,5 +650,6 @@
 <script src="assets/js/inventory.js" defer></script>
 <script src="assets/js/finance-wizard.js" defer></script>
 <script src="assets/js/reviews.js" defer></script>
+<script src="assets/js/sell.js" defer></script>
 </body>
 </html>

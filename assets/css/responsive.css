@@ -24,9 +24,18 @@
   .cf-perspective{height:440px}
   .cf-nav{width:38px;height:38px}
 }
+@media(max-width:1023px){
+  .sv-layout{grid-template-columns:1fr;gap:36px}
+}
 @media(max-width:640px){
   .rv-outer{padding:0 0}        /* arrows hidden on small mobile — swipe only */
   .rv-arrow{display:none}
+  .sv-grid{grid-template-columns:1fr}
+  .sv-field--full{grid-column:auto}
+  .sv-trust-badge{font-size:11px;gap:5px;padding:11px 6px}
+  .sv-panel{padding:20px 18px}
+  .sv-btns{flex-wrap:wrap}
+  .sv-btns .btn{flex:1;justify-content:center}
 }
 @media(min-width:641px) and (max-width:1023px){
   .rv-outer{padding:0 48px}     /* show arrows, 2 cards visible */
