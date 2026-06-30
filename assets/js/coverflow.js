@@ -420,10 +420,10 @@
   /* ================================================================
      LIGHTBOX — full-res poster viewer with in-lightbox navigation
      ================================================================ */
-  var lb        = null;
-  var lbImgEl   = null;
-  var lbCapEl   = null;
-  var lbIdx     = 0;
+  var lb            = null;
+  var lbImgEl       = null;
+  var lbCounterEl   = null;
+  var lbIdx         = 0;
   var lbOpen    = false;
   var lbTx0     = 0;
 
@@ -446,12 +446,20 @@
       '<div class="cf-lb-inner">' +
         '<img class="cf-lb-img" src="" alt="" loading="eager">' +
       '</div>' +
-      '<p class="cf-lb-cap"></p>'
+      '<div class="cf-lb-footer">' +
+        '<span class="cf-lb-counter">1 / ' + N + '</span>' +
+        '<a class="btn btn-wa cf-lb-wa" href="https://wa.me/27722034791" target="_blank" rel="noopener noreferrer">' +
+          '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">' +
+            '<path d="M12 2a10 10 0 0 0-8.6 15l-1.4 5 5.1-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8 1-.3.1-.5 0a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2a.4.4 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3A3 3 0 0 0 6 8.6c0 1.8 1.3 3.5 1.5 3.8s2.6 4 6.3 5.3c2.3.8 2.4.5 2.9.5a2.5 2.5 0 0 0 1.7-1.2 2 2 0 0 0 .1-1.2c0-.1-.2-.2-.4-.3z"/>' +
+          '</svg>' +
+          'WhatsApp Us' +
+        '</a>' +
+      '</div>'
     );
     document.body.appendChild(lb);
 
-    lbImgEl = lb.querySelector('.cf-lb-img');
-    lbCapEl = lb.querySelector('.cf-lb-cap');
+    lbImgEl     = lb.querySelector('.cf-lb-img');
+    lbCounterEl = lb.querySelector('.cf-lb-counter');
 
     /* close handlers */
     lb.querySelector('.cf-lb-close').addEventListener('click', closeLb);
@@ -510,20 +518,19 @@
 
   function lbSetSlide(idx, animate) {
     var v = VEHICLES[idx];
+    lbCounterEl.textContent = (idx + 1) + ' / ' + N;
     if (animate) {
       lbImgEl.style.opacity = '0';
       lbImgEl.style.transform = 'scale(0.97)';
       setTimeout(function () {
         lbImgEl.src = v.img;
         lbImgEl.alt = v.alt;
-        lbCapEl.textContent = v.title + (v.price ? '  ·  ' + v.price : '');
         lbImgEl.style.opacity   = '1';
         lbImgEl.style.transform = 'scale(1)';
       }, 160);
     } else {
       lbImgEl.src = v.img;
       lbImgEl.alt = v.alt;
-      lbCapEl.textContent = v.title + (v.price ? '  ·  ' + v.price : '');
       lbImgEl.style.opacity   = '1';
       lbImgEl.style.transform = 'scale(1)';
     }
