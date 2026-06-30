@@ -208,6 +208,53 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   font-family:var(--display);font-size:36px;font-weight:800;
   color:rgba(255,255,255,.18);letter-spacing:.05em;z-index:1}
 
+/* "View full poster" secondary action */
+.cf-view-btn{display:block;width:100%;margin-top:9px;padding:8px 14px;
+  background:transparent;border:1px solid rgba(20,28,45,.16);border-radius:9px;
+  font-family:var(--display);font-size:11.5px;font-weight:600;
+  color:var(--muted);cursor:pointer;text-align:center;letter-spacing:.02em;
+  transition:.22s var(--ease)}
+.cf-view-btn:hover{border-color:var(--red);color:var(--red);
+  background:rgba(220,26,38,.04)}
+
+/* =========================================================
+   LIGHTBOX — full-res poster modal
+   ========================================================= */
+.cf-lb{position:fixed;inset:0;z-index:200;
+  background:rgba(8,10,14,.92);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .28s ease}
+.cf-lb.cf-lb-show{opacity:1;pointer-events:auto}
+/* close button */
+.cf-lb-close{position:absolute;top:18px;right:20px;z-index:5;
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:#fff;font-size:22px;display:grid;place-items:center;cursor:pointer;
+  transition:.22s var(--ease)}
+.cf-lb-close:hover{background:rgba(220,26,38,.75);border-color:transparent}
+/* prev/next arrows */
+.cf-lb-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:5;
+  width:50px;height:50px;border-radius:50%;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);
+  color:#fff;display:grid;place-items:center;cursor:pointer;
+  transition:.22s var(--ease)}
+.cf-lb-nav svg{width:22px;height:22px}
+.cf-lb-nav:hover{background:var(--red);border-color:var(--red);
+  box-shadow:0 0 28px -4px rgba(220,26,38,.6)}
+.cf-lb-prev{left:18px}.cf-lb-next{right:18px}
+/* image area — allows native pinch-zoom on mobile */
+.cf-lb-inner{display:flex;align-items:center;justify-content:center;
+  max-width:88vw;max-height:78vh;touch-action:pinch-zoom;overflow:auto;
+  -webkit-overflow-scrolling:touch}
+.cf-lb-img{max-width:88vw;max-height:76vh;width:auto;height:auto;
+  object-fit:contain;border-radius:16px;display:block;
+  box-shadow:0 32px 90px -10px rgba(0,0,0,.65);
+  transition:opacity .2s ease,transform .2s ease}
+/* caption */
+.cf-lb-cap{margin-top:18px;color:rgba(255,255,255,.72);
+  font-family:var(--display);font-size:14px;font-weight:600;
+  text-align:center;max-width:80vw;letter-spacing:.01em}
+
 /* inactive title label — gradient overlay on image bottom */
 .cf-label{position:absolute;bottom:0;left:0;right:0;padding:32px 14px 14px;
   background:linear-gradient(180deg,transparent,rgba(10,12,16,.85));

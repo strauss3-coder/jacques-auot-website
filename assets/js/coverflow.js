@@ -1,14 +1,15 @@
 /* ===================================================================
-   COVERFLOW 3D CAROUSEL — Jacques Auto  (v2 — refined interactions)
-   Premium infinite showroom carousel, vanilla JS, no dependencies.
+   COVERFLOW 3D CAROUSEL — Jacques Auto  (v3)
+   Premium infinite showroom carousel · vanilla JS · no dependencies
 
-   Fixes in this version:
-   · Image paths resolved from <template> with full relative path
-   · Touch: direction-aware — horizontal swipe owns the carousel,
-     vertical swipe falls through to page scroll; no passive conflict
-   · Mouse drag: clean velocity tracking, cursor feedback, click guard
-   · Spring physics ("magnetic" snap) replacing linear lerp
-   · Image load-error placeholder
+   Interaction model
+   ─────────────────
+   · Touch / mouse drag  → free momentum (no spring, no forced snap)
+   · Arrows / auto       → smooth lerp to exact card index
+   · After momentum dies → gentle passive drift to nearest card
+     (prevents forever-stuck-between-cards without feeling like a snap)
+   · Wheel               → continuous, snaps after brief idle
+   · Lightbox            → full-res poster with in-lightbox navigation
    =================================================================== */
 
 (function () {
@@ -17,7 +18,7 @@
   var root = document.getElementById('coverflow');
   if (!root) return;
 
-  /* ── 1. Vehicle data from <template id="cf-data"> ────────────── */
+  /* ── 1. Vehicle data ─────────────────────────────────────────── */
   var tpl = document.getElementById('cf-data');
   if (!tpl) return;
   var nodes = tpl.content.querySelectorAll('[data-img]');
@@ -25,7 +26,7 @@
 
   var VEHICLES = Array.prototype.slice.call(nodes).map(function (n) {
     return {
-      img:   n.dataset.img,          /* already a full relative path */
+      img:   n.dataset.img,
       title: n.dataset.title,
       year:  n.dataset.year  || '',
       price: n.dataset.price || '',
@@ -48,22 +49,25 @@
 
   var C = cfg();
 
-  /* ── 3. Spring physics constants ────────────────────────────── */
-  var SPRING_K  = 0.20;   /* stiffness — pull toward target per frame   */
-  var SPRING_D  = 0.76;   /* damping  — slightly underdamped for overshoot */
-  var MOMENTUM  = 3.2;    /* how far a fast fling carries past snap point  */
+  /* ── 3. Motion constants ─────────────────────────────────────── */
+  var FRICTION       = 0.93;  /* momentum decay per frame (swipe glide)    */
+  var DRIFT_FACTOR   = 0.05;  /* passive drift rate once momentum is ~zero */
+  var DRIFT_THRESH   = 0.002; /* momentum below this → start passive drift */
+  var LERP_FACTOR    = 0.12;  /* lerp rate for arrow / auto-advance        */
+  var FLING_MULT     = 3.0;   /* fling distance multiplier                 */
+  var WHEEL_SCALE    = 220;   /* pixels of wheel delta per card            */
 
   /* ── 4. State ────────────────────────────────────────────────── */
-  var pos        = 0;     /* current interpolated index (float)  */
-  var target     = 0;     /* desired index (snaps to integer)    */
-  var springVel  = 0;     /* spring velocity                     */
+  var pos        = 0;      /* current visual position (float, in card units) */
+  var momentum   = 0;      /* post-release glide velocity (card units/frame) */
+  var lerpTarget = null;   /* non-null only during arrow/auto navigation     */
   var hovered    = false;
   var isDrag     = false;
-  var didDrag    = false; /* distinguishes click vs. drag on mouseup */
+  var didDrag    = false;  /* distinguishes drag-release from click           */
   var dragX0     = 0;
   var dragPos0   = 0;
   var lastX      = 0;
-  var velX       = 0;     /* smoothed drag velocity              */
+  var velX       = 0;      /* smoothed drag/swipe velocity                    */
   var autoTimer  = null;
   var resTimer   = null;
   var wheelSnap  = null;
@@ -83,7 +87,7 @@
     card.setAttribute('aria-label', v.title);
     card.innerHTML = buildCard(v);
 
-    /* image error → placeholder */
+    /* broken-image fallback */
     var img = card.querySelector('img');
     if (img) {
       img.addEventListener('error', function () {
@@ -103,8 +107,7 @@
       (v.price ? ' (' + v.price + ')' : '') +
       '. Can you share more details and availability?'
     );
-    var wa = 'https://wa.me/27722034791?text=' + msg;
-    /* initials for placeholder */
+    var wa   = 'https://wa.me/27722034791?text=' + msg;
     var init = v.title.split(' ').slice(0, 2).map(function (w) {
       return w[0] || '';
     }).join('').toUpperCase();
@@ -113,7 +116,6 @@
       '<div class="cf-inner">' +
         '<div class="cf-img-wrap">' +
           '<img src="' + v.img + '" alt="' + v.alt + '" loading="lazy">' +
-          /* shown only when image fails to load */
           '<div class="cf-ph" aria-hidden="true">' + init + '</div>' +
         '</div>' +
         '<div class="cf-label">' + v.title + '</div>' +
@@ -139,12 +141,14 @@
             '</svg>' +
             'Enquire on WhatsApp' +
           '</a>' +
+          /* ── "View Full Poster" — secondary action in glass panel */
+          '<button class="cf-view-btn" type="button">View full poster</button>' +
         '</div>' +
       '</div>'
     );
   }
 
-  /* ── 7. Apply responsive dimensions ─────────────────────────── */
+  /* ── 7. Responsive dimensions ────────────────────────────────── */
   function applyConfig() {
     if (stage) stage.style.perspective = C.persp + 'px';
     track.style.width  = C.cardW + 'px';
@@ -155,7 +159,7 @@
     });
   }
 
-  /* ── 8. Per-card transform from distance (unchanged visuals) ── */
+  /* ── 8. Per-card visual transform (visuals UNCHANGED) ─────────── */
   function getProps(dist) {
     var abs = Math.abs(dist);
     return {
@@ -171,13 +175,12 @@
     };
   }
 
-  /* ── 9. Render — apply transforms to every visible card ─────── */
+  /* ── 9. Render ───────────────────────────────────────────────── */
   function render() {
     var activeIdx = -1;
     var minDist   = Infinity;
 
     cards.forEach(function (card, i) {
-      /* shortest-path circular distance */
       var d = i - pos;
       while (d >  N / 2) d -= N;
       while (d < -N / 2) d += N;
@@ -224,43 +227,72 @@
     });
   }
 
-  /* ── 10. Spring animation tick ───────────────────────────────── */
+  /* ── 10. Helpers: normalise position to [0, N) ───────────────── */
+  function normalise() {
+    pos = ((pos % N) + N) % N;
+    if (lerpTarget !== null) {
+      /* keep lerp target on same "side" to avoid wrap-around jumps */
+      while (lerpTarget - pos >  N / 2) lerpTarget -= N;
+      while (pos - lerpTarget >  N / 2) lerpTarget += N;
+    }
+  }
+
+  /* ── 11. Animation tick ──────────────────────────────────────── */
   function tick() {
     if (!isDrag) {
-      /* spring physics: apply stiffness + damping each frame */
-      var diff  = target - pos;
-      springVel = springVel * SPRING_D + diff * SPRING_K;
-      pos      += springVel;
 
-      /* settle: close enough AND barely moving */
-      if (Math.abs(diff) < 0.0006 && Math.abs(springVel) < 0.0006) {
-        pos       = target;
-        springVel = 0;
-        /* normalise to prevent float drift */
-        var norm = ((Math.round(pos) % N) + N) % N;
-        pos    = norm;
-        target = norm;
+      if (lerpTarget !== null) {
+        /* ── arrow / auto-advance: smooth lerp, no bounce ── */
+        var diff = lerpTarget - pos;
+        pos += diff * LERP_FACTOR;
+        if (Math.abs(diff) < 0.0005) {
+          pos        = lerpTarget;
+          lerpTarget = null;
+          normalise();
+        }
+
+      } else if (Math.abs(momentum) > DRIFT_THRESH) {
+        /* ── post-swipe: free momentum glide ── */
+        pos      += momentum;
+        momentum *= FRICTION;
+        normalise();
+
+      } else {
+        /* ── passive drift: gently align to nearest card ─────────
+           This engages only when momentum has fully decayed.
+           Rate is slow enough to feel like settling, not snapping. */
+        momentum = 0;
+        var nearest = Math.round(pos);
+        var toNearest = nearest - pos;
+        /* shortest path across wrap boundary */
+        while (toNearest >  N / 2) toNearest -= N;
+        while (toNearest < -N / 2) toNearest += N;
+        if (Math.abs(toNearest) > 0.0005) {
+          pos += toNearest * DRIFT_FACTOR;
+        } else {
+          pos = nearest;
+          normalise();
+        }
       }
     }
-    /* when isDrag, pos is written directly by the drag handler */
+    /* during drag: pos is written directly — tick just renders */
 
     render();
     requestAnimationFrame(tick);
   }
 
-  /* ── 11. Navigation helpers ──────────────────────────────────── */
-  function snapTo(idx) {
-    /* always pick the shortest wrap-around path */
-    var d = idx - target;
+  /* ── 12. Navigation: arrow buttons, auto, keyboard ──────────── */
+  function navTo(idx) {
+    /* shortest circular path, then smooth lerp */
+    var d = idx - pos;
     while (d >  N / 2) d -= N;
     while (d < -N / 2) d += N;
-    target    = target + d;
-    springVel = 0;          /* let spring start fresh from current pos */
+    lerpTarget = pos + d;
+    momentum   = 0;
   }
 
-  function step(dir) { snapTo(Math.round(pos) + dir); }
+  function step(dir) { navTo(Math.round(pos) + dir); }
 
-  /* ── 12. Auto-advance (pauses on interaction) ────────────────── */
   function startAuto() {
     stopAuto();
     autoTimer = setInterval(function () {
@@ -269,161 +301,266 @@
   }
   function stopAuto() { clearInterval(autoTimer); }
 
-  /* ── 13. Arrow buttons ───────────────────────────────────────── */
   if (prevBtn) prevBtn.addEventListener('click', function () { step(-1); });
   if (nextBtn) nextBtn.addEventListener('click', function () { step(1);  });
 
-  /* ── 14. Click on side card → navigate ─────────────────────── */
+  /* ── 13. Side-card click → navigate ─────────────────────────── */
   track.addEventListener('click', function (e) {
-    /* ignore if this click was the end of a mouse drag */
+    /* "View full poster" button — handled separately below */
+    if (e.target.classList.contains('cf-view-btn')) return;
+    /* suppress click if this pointer-up follows a real drag */
     if (didDrag) { didDrag = false; return; }
+
     var card = e.target.closest('.cf-card');
     if (!card) return;
-    var idx = cards.indexOf(card);
+    var idx  = cards.indexOf(card);
     if (idx < 0) return;
     var d = idx - pos;
     while (d >  N / 2) d -= N;
     while (d < -N / 2) d += N;
-    if (Math.abs(d) > 0.35) { e.preventDefault(); snapTo(idx); }
+    if (Math.abs(d) > 0.35) { e.preventDefault(); navTo(idx); }
   });
 
-  /* ── 15. Mouse drag — desktop ───────────────────────────────── */
+  /* ── 14. Mouse drag ──────────────────────────────────────────── */
   track.style.cursor = 'grab';
 
   track.addEventListener('mousedown', function (e) {
-    if (e.button !== 0) return;
-    isDrag   = true;
-    didDrag  = false;
-    dragX0   = e.clientX;
-    dragPos0 = pos;
-    lastX    = e.clientX;
-    velX     = 0;
-    springVel = 0;
-    track.style.cursor          = 'grabbing';
-    document.body.style.cursor  = 'grabbing';
+    if (e.button !== 0 || e.target.closest('a, button')) return;
+    isDrag     = true;
+    didDrag    = false;
+    dragX0     = e.clientX;
+    dragPos0   = pos;
+    lastX      = e.clientX;
+    velX       = 0;
+    momentum   = 0;
+    lerpTarget = null;
+    track.style.cursor         = 'grabbing';
+    document.body.style.cursor = 'grabbing';
     e.preventDefault();
   });
 
   document.addEventListener('mousemove', function (e) {
     if (!isDrag) return;
-    /* exponential-smoothed velocity for natural momentum */
     var rawVel = e.clientX - lastX;
-    velX  = velX * 0.6 + rawVel * 0.4;
+    velX  = velX * 0.65 + rawVel * 0.35;   /* smoothed velocity */
     lastX = e.clientX;
-
-    /* move dx > 4px → mark as a drag (not a click) */
     if (Math.abs(e.clientX - dragX0) > 4) didDrag = true;
-
-    /* write pos directly while dragging (spring bypassed in tick) */
     pos = dragPos0 + (dragX0 - e.clientX) / C.spread;
   });
 
   document.addEventListener('mouseup', function () {
     if (!isDrag) return;
-    isDrag = false;
+    isDrag     = false;
+    lerpTarget = null;
     track.style.cursor         = 'grab';
     document.body.style.cursor = '';
-
-    /* fling snap: nearest card + momentum throw */
-    var throwCards = -(velX / C.spread) * MOMENTUM;
-    snapTo(Math.round(pos + throwCards));
+    /* release: hand velocity off to momentum system */
+    momentum = -(velX / C.spread) * FLING_MULT;
   });
 
-  /* ── 16. Touch swipe — direction-aware, page-scroll safe ─────
-     Strategy:
-     · touchstart (passive) — record start coords, reset state
-     · touchmove  (non-passive!) — detect direction on first move
-       > horizontal → e.preventDefault(), own the carousel
-       > vertical   → do nothing, let page scroll through
-     · touchend (passive) — snap to nearest card with momentum       */
-
-  var tStartX  = 0;
-  var tStartY  = 0;
+  /* ── 15. Touch swipe — direction-aware ───────────────────────── */
+  var tStartX   = 0;
+  var tStartY   = 0;
   var tStartPos = 0;
-  var tDir     = null;   /* null | 'x' | 'y' */
-  var tLastX   = 0;
-  var tVelX    = 0;
+  var tDir      = null;   /* null | 'x' | 'y' */
+  var tLastX    = 0;
+  var tVelX     = 0;
 
   track.addEventListener('touchstart', function (e) {
-    var t    = e.touches[0];
+    if (e.touches.length > 1) return;   /* ignore multi-touch */
+    var t   = e.touches[0];
     tStartX  = t.clientX;
     tStartY  = t.clientY;
     tStartPos = pos;
     tLastX   = t.clientX;
     tVelX    = 0;
     tDir     = null;
-    springVel = 0;
+    momentum = 0;
+    lerpTarget = null;
   }, { passive: true });
 
   track.addEventListener('touchmove', function (e) {
+    if (e.touches.length > 1) { tDir = 'y'; return; } /* pinch = page zoom, bail */
     var t  = e.touches[0];
     var dx = t.clientX - tStartX;
     var dy = t.clientY - tStartY;
 
-    /* lock direction on first significant movement (6 px threshold) */
-    if (tDir === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
-      tDir = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+    /* detect direction on first 4 px of movement */
+    if (tDir === null && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+      tDir = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
     }
 
-    /* vertical scroll — don't interfere */
+    /* vertical → page scrolls normally, don't touch carousel */
     if (tDir !== 'x') return;
 
-    /* horizontal swipe — own it */
-    e.preventDefault();
+    e.preventDefault();   /* own the horizontal gesture */
 
     var rawVel = t.clientX - tLastX;
-    tVelX  = tVelX * 0.6 + rawVel * 0.4;
+    tVelX  = tVelX * 0.65 + rawVel * 0.35;
     tLastX = t.clientX;
 
-    /* write pos directly while dragging */
     pos = tStartPos + (tStartX - t.clientX) / C.spread;
-  }, { passive: false });   /* MUST be non-passive to call preventDefault */
+  }, { passive: false });   /* non-passive required for preventDefault */
 
-  track.addEventListener('touchend', function () {
+  track.addEventListener('touchend', function (e) {
     if (tDir !== 'x') { tDir = null; return; }
-    tDir = null;
-    var throwCards = -(tVelX / C.spread) * MOMENTUM;
-    snapTo(Math.round(pos + throwCards));
+    tDir       = null;
+    lerpTarget = null;
+    /* hand velocity off to momentum system */
+    momentum = -(tVelX / C.spread) * FLING_MULT;
   }, { passive: true });
 
-  /* ── 17. Mouse wheel / trackpad horizontal ───────────────────── */
+  /* ── 16. Wheel ───────────────────────────────────────────────── */
   root.addEventListener('wheel', function (e) {
-    /* prefer horizontal delta (trackpad 2-finger scroll);
-       fall back to vertical (traditional mouse wheel)       */
-    var delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    /* only hijack wheel when there is actual horizontal intent
-       OR when the user is over the carousel (not just scrolling past) */
     e.preventDefault();
-    target   += delta / 220;
-    springVel = 0;
-
+    var delta  = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    lerpTarget = null;
+    pos       += delta / WHEEL_SCALE;
+    momentum   = 0;
     clearTimeout(wheelSnap);
-    wheelSnap = setTimeout(function () {
-      snapTo(Math.round(target));
-    }, 200);
+    wheelSnap = setTimeout(function () { navTo(Math.round(pos)); }, 220);
   }, { passive: false });
 
-  /* ── 18. Keyboard ────────────────────────────────────────────── */
+  /* ── 17. Keyboard ────────────────────────────────────────────── */
   track.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowLeft')  { e.preventDefault(); step(-1); }
     if (e.key === 'ArrowRight') { e.preventDefault(); step(1);  }
   });
   track.setAttribute('tabindex', '0');
 
-  /* ── 19. Hover pause ─────────────────────────────────────────── */
+  /* ── 18. Hover pause ─────────────────────────────────────────── */
   root.addEventListener('mouseenter', function () { hovered = true;  });
   root.addEventListener('mouseleave', function () { hovered = false; });
 
-  /* ── 20. Responsive resize ───────────────────────────────────── */
+  /* ── 19. Resize ──────────────────────────────────────────────── */
   window.addEventListener('resize', function () {
     clearTimeout(resTimer);
-    resTimer = setTimeout(function () {
-      C = cfg();
-      applyConfig();
-    }, 260);
+    resTimer = setTimeout(function () { C = cfg(); applyConfig(); }, 260);
   });
 
-  /* ── 21. Init ────────────────────────────────────────────────── */
+  /* ================================================================
+     LIGHTBOX — full-res poster viewer with in-lightbox navigation
+     ================================================================ */
+  var lb        = null;
+  var lbImgEl   = null;
+  var lbCapEl   = null;
+  var lbIdx     = 0;
+  var lbOpen    = false;
+  var lbTx0     = 0;
+
+  function buildLightbox() {
+    lb = document.createElement('div');
+    lb.className = 'cf-lb';
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-modal', 'true');
+    lb.setAttribute('aria-label', 'Vehicle poster viewer');
+    lb.innerHTML = (
+      '<button class="cf-lb-close" aria-label="Close">&#xd7;</button>' +
+      '<button class="cf-lb-nav cf-lb-prev" aria-label="Previous poster">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+          '<path d="M15 18l-6-6 6-6"/></svg>' +
+      '</button>' +
+      '<button class="cf-lb-nav cf-lb-next" aria-label="Next poster">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+          '<path d="M9 18l6-6-6-6"/></svg>' +
+      '</button>' +
+      '<div class="cf-lb-inner">' +
+        '<img class="cf-lb-img" src="" alt="" loading="eager">' +
+      '</div>' +
+      '<p class="cf-lb-cap"></p>'
+    );
+    document.body.appendChild(lb);
+
+    lbImgEl = lb.querySelector('.cf-lb-img');
+    lbCapEl = lb.querySelector('.cf-lb-cap');
+
+    /* close handlers */
+    lb.querySelector('.cf-lb-close').addEventListener('click', closeLb);
+    lb.addEventListener('click', function (e) {
+      if (e.target === lb || e.target === lb.querySelector('.cf-lb-inner')) closeLb();
+    });
+
+    /* in-lightbox navigation */
+    lb.querySelector('.cf-lb-prev').addEventListener('click', function (e) {
+      e.stopPropagation(); lbNav(-1);
+    });
+    lb.querySelector('.cf-lb-next').addEventListener('click', function (e) {
+      e.stopPropagation(); lbNav(1);
+    });
+
+    /* keyboard (only active when lightbox is open) */
+    document.addEventListener('keydown', function (e) {
+      if (!lbOpen) return;
+      if (e.key === 'Escape')      closeLb();
+      if (e.key === 'ArrowLeft')   lbNav(-1);
+      if (e.key === 'ArrowRight')  lbNav(1);
+    });
+
+    /* swipe in lightbox to navigate (single-touch only, let 2-finger pinch zoom) */
+    lb.addEventListener('touchstart', function (e) {
+      if (e.touches.length === 1) lbTx0 = e.touches[0].clientX;
+    }, { passive: true });
+    lb.addEventListener('touchend', function (e) {
+      if (e.changedTouches.length !== 1) return;
+      var dx = e.changedTouches[0].clientX - lbTx0;
+      if (Math.abs(dx) > 48) lbNav(dx > 0 ? -1 : 1);
+    }, { passive: true });
+  }
+
+  function openLb(idx) {
+    if (!lb) buildLightbox();
+    lbIdx  = ((idx % N) + N) % N;
+    lbOpen = true;
+    lbSetSlide(lbIdx, false);
+    lb.classList.add('cf-lb-show');
+    document.body.style.overflow = 'hidden';
+    lb.querySelector('.cf-lb-close').focus();
+  }
+
+  function closeLb() {
+    if (!lb) return;
+    lbOpen = false;
+    lb.classList.remove('cf-lb-show');
+    document.body.style.overflow = '';
+  }
+
+  function lbNav(dir) {
+    lbIdx = ((lbIdx + dir) % N + N) % N;
+    lbSetSlide(lbIdx, true);
+  }
+
+  function lbSetSlide(idx, animate) {
+    var v = VEHICLES[idx];
+    if (animate) {
+      lbImgEl.style.opacity = '0';
+      lbImgEl.style.transform = 'scale(0.97)';
+      setTimeout(function () {
+        lbImgEl.src = v.img;
+        lbImgEl.alt = v.alt;
+        lbCapEl.textContent = v.title + (v.price ? '  ·  ' + v.price : '');
+        lbImgEl.style.opacity   = '1';
+        lbImgEl.style.transform = 'scale(1)';
+      }, 160);
+    } else {
+      lbImgEl.src = v.img;
+      lbImgEl.alt = v.alt;
+      lbCapEl.textContent = v.title + (v.price ? '  ·  ' + v.price : '');
+      lbImgEl.style.opacity   = '1';
+      lbImgEl.style.transform = 'scale(1)';
+    }
+  }
+
+  /* "View full poster" button — delegated click on track */
+  track.addEventListener('click', function (e) {
+    var btn = e.target.closest('.cf-view-btn');
+    if (!btn) return;
+    e.stopPropagation();
+    var card = btn.closest('.cf-card');
+    var idx  = cards.indexOf(card);
+    if (idx >= 0) openLb(idx);
+  });
+
+  /* ── 20. Init ────────────────────────────────────────────────── */
   applyConfig();
   render();
   requestAnimationFrame(tick);
