@@ -24,6 +24,13 @@
   .cf-perspective{height:440px}
   .cf-nav{width:38px;height:38px}
 }
+@media(max-width:640px){
+  .rv-outer{padding:0 0}        /* arrows hidden on small mobile — swipe only */
+  .rv-arrow{display:none}
+}
+@media(min-width:641px) and (max-width:1023px){
+  .rv-outer{padding:0 48px}     /* show arrows, 2 cards visible */
+}
 @media(max-width:600px){
   .wrap{padding:0 18px}
   .inv-grid{grid-template-columns:1fr;gap:18px}
