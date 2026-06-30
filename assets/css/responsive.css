@@ -4,7 +4,6 @@
   .stripe-inner{grid-template-columns:repeat(2,1fr);gap:30px 20px}
   .gallery{columns:2}
   .finance-steps{grid-template-columns:repeat(2,1fr)}
-  .carousel-track .vcard{width:300px}
 }
 @media(max-width:900px){
   .nav-links,.nav-phone{display:none}.burger{display:flex}
@@ -12,7 +11,8 @@
   .finance-card{padding:36px}
   .stock-grid{grid-template-columns:repeat(2,1fr)}
   .section{padding:74px 0}
-  .carousel-track .vcard{width:320px}
+  .cf-perspective{height:440px}
+  .cf-nav{width:38px;height:38px}
 }
 @media(max-width:600px){
   .wrap{padding:0 18px}
@@ -23,6 +23,7 @@
   .footer-top{grid-template-columns:1fr 1fr}
   .hero-actions{flex-direction:column}.hero-actions .btn{width:100%;justify-content:center}
   .finance-steps{grid-template-columns:1fr}
-  .carousel-track .vcard{width:86vw}
-  .carousel-btn{width:36px;height:36px}
+  .cf-perspective{height:420px}
+  .cf-nav{display:none}
+  .cf-price{font-size:18px}
 }
