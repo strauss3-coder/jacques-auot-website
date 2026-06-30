@@ -90,6 +90,29 @@
     update();
   });
 
+  /* ── "Local Dealer You Can Trust" — connected-cards effect ── */
+  (function () {
+    var grid = document.querySelector('.why-grid');
+    if (!grid) return;
+
+    /* connected dimming: hovering one card dims siblings */
+    grid.addEventListener('mouseenter', function () {
+      grid.classList.add('has-hover');
+    }, true);
+    grid.addEventListener('mouseleave', function () {
+      grid.classList.remove('has-hover');
+    }, true);
+
+    /* cursor spotlight: track mouse inside each card, update CSS vars */
+    grid.querySelectorAll('.why-card').forEach(function (card) {
+      card.addEventListener('mousemove', function (e) {
+        var r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        card.style.setProperty('--my', (e.clientY - r.top)  + 'px');
+      });
+    });
+  })();
+
   var form = document.getElementById('enquiryForm');
   var ok = document.getElementById('formOk');
   if (form && ok) {

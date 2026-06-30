@@ -389,6 +389,7 @@
             '<div class="inv-dots">' + dotHTML + '</div>',
           ].join('') : '') +
           (v.financeAvailable ? '<span class="inv-fin-badge">Finance</span>' : '') +
+          (n > 1 ? '<span class="inv-counter" aria-label="Image 1 of ' + n + '">1 / ' + n + '</span>' : '') +
         '</div>' +
 
         /* card body */
@@ -463,10 +464,18 @@
     idx = ((idx % n) + n) % n;
     imgEl.dataset.idx = idx;
     var track = imgEl.querySelector('.inv-imgs-track');
-    if (track) track.style.transform = 'translateX(-' + (idx * (100 / n)) + '%)';
+    /* translateX(%) is relative to the element's OWN box width (= container width,
+       not overflow). Each image is 100% of the container, so to reach image idx
+       we shift by idx × 100% of the container = idx × 100% of the track box. */
+    if (track) track.style.transform = 'translateX(-' + (idx * 100) + '%)';
     imgEl.querySelectorAll('.inv-dot').forEach(function (d, i) {
       d.classList.toggle('active', i === idx);
     });
+    var counter = imgEl.querySelector('.inv-counter');
+    if (counter) {
+      counter.textContent = (idx + 1) + ' / ' + n;
+      counter.setAttribute('aria-label', 'Image ' + (idx + 1) + ' of ' + n);
+    }
   }
 
   /* shared touch state — safe across multiple containers via imgEl ref */
@@ -516,11 +525,12 @@
       }
       if (cTouchState.dir !== 'x') return;
       e.preventDefault();
-      var n     = parseInt(cTouchState.imgEl.dataset.n || '1');
       var track = cTouchState.imgEl.querySelector('.inv-imgs-track');
       if (!track) return;
-      var base  = -(cTouchState.startIdx * (100 / n));
-      var delta = (dx / cTouchState.imgEl.offsetWidth) * (100 / n);
+      /* base and delta both in "% of track box width" (= container width).
+         Each image occupies 100% of the container, so startIdx images = startIdx × 100%. */
+      var base  = -(cTouchState.startIdx * 100);
+      var delta = (dx / cTouchState.imgEl.offsetWidth) * 100;
       track.style.transition = 'none';
       track.style.transform  = 'translateX(' + (base + delta) + '%)';
     }, { passive: false });
@@ -530,7 +540,12 @@
       var dx    = e.changedTouches[0].clientX - cTouchState.startX;
       var imgEl = cTouchState.imgEl;
       var track = imgEl.querySelector('.inv-imgs-track');
-      if (track) track.style.transition = '';
+      if (track) {
+        track.style.transition = '';
+        /* force a style recalc so the CSS transition is active before
+           carouselTo sets the final transform — prevents instant jump */
+        track.getBoundingClientRect();
+      }
       carouselTo(imgEl, cTouchState.startIdx + (dx < -48 ? 1 : dx > 48 ? -1 : 0));
       cTouchState = null;
     }, { passive: true });

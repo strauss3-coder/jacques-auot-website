@@ -8,6 +8,19 @@
 [data-delay="2"]{transition-delay:.16s}
 [data-delay="3"]{transition-delay:.24s}
 [data-delay="4"]{transition-delay:.32s}
+[data-delay="5"]{transition-delay:.40s}
+
+/* Why / trust cards: gentle icon pulse with staggered timing */
+@keyframes why-pulse{
+  0%,100%{transform:scale(1)}
+  4%{transform:scale(1.18) rotate(5deg)}
+  8%{transform:scale(1)}
+}
+.why-card:nth-child(2) .why-ic svg{animation-delay:.9s}
+.why-card:nth-child(3) .why-ic svg{animation-delay:1.8s}
+.why-card:nth-child(4) .why-ic svg{animation-delay:2.7s}
+.why-card:nth-child(5) .why-ic svg{animation-delay:3.6s}
+.why-card:nth-child(6) .why-ic svg{animation-delay:4.5s}
 
 @keyframes sd{
   0%{transform:scaleY(0);transform-origin:top}
@@ -34,6 +47,7 @@ body.hero-lock{overflow:hidden}
 /* respect user motion preference everywhere */
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition-duration:.01ms!important}
+  .why-ic svg{animation:none!important}
   .reveal{opacity:1;transform:none}
   html{scroll-behavior:auto}
   .hero h1 .word,.hero-rest{opacity:1!important;transform:none!important}

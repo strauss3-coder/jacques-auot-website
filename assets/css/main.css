@@ -313,13 +313,30 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
    WHY US
    ========================================================= */
 .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.why-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;transition:.4s var(--ease);
+.why-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;
+  transition:opacity .35s ease,transform .4s var(--ease),border-color .4s var(--ease),box-shadow .4s var(--ease);
+  position:relative;overflow:hidden;cursor:default}
+/* cursor spotlight pseudo-element */
+.why-card::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%),rgba(220,26,38,.07),transparent 70%);
+  opacity:0;transition:opacity .4s ease}
+.why-card:hover::before{opacity:1}
+/* ensure card content sits above the spotlight */
+.why-card>*{position:relative;z-index:1}
   box-shadow:0 6px 20px -16px rgba(20,28,45,.3);position:relative;overflow:hidden}
-.why-card:hover{transform:translateY(-5px);border-color:var(--red-soft);box-shadow:0 0 0 1px var(--red-soft),var(--shadow-lg)}
+.why-card:hover{transform:translateY(-6px);border-color:var(--red-soft);
+  box-shadow:0 0 0 1px var(--red-soft),0 20px 60px -20px rgba(220,26,38,.22),var(--shadow-lg)}
+/* connected-cards: dim siblings when one is hovered */
+.why-grid.has-hover .why-card{opacity:.55;transform:translateY(0)}
+.why-grid.has-hover .why-card:hover{opacity:1;transform:translateY(-6px);
+  border-color:var(--red-soft);
+  box-shadow:0 0 0 1px var(--red-soft),0 20px 60px -20px rgba(220,26,38,.22),var(--shadow-lg)}
 .why-ic{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;margin-bottom:18px;
   background:linear-gradient(135deg,rgba(220,26,38,.1),rgba(220,26,38,.02));border:1px solid var(--red-soft);transition:.4s}
-.why-card:hover .why-ic{box-shadow:0 0 22px -7px var(--red-glow)}
-.why-ic svg{width:24px;height:24px;color:var(--red)}
+.why-card:hover .why-ic{box-shadow:0 0 28px -6px var(--red-glow);transform:scale(1.08)}
+.why-ic{transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+.why-ic svg{width:24px;height:24px;color:var(--red);
+  animation:why-pulse 6s ease-in-out infinite;transition:transform .3s ease}
 .why-card h3{font-size:18px;font-weight:700;margin-bottom:8px}
 .why-card p{color:var(--muted);font-size:14.5px}
 
@@ -506,6 +523,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   background:rgba(220,26,38,.92);color:#fff;font-family:var(--display);
   font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
   padding:5px 10px;border-radius:7px;box-shadow:0 4px 12px -4px var(--red-soft)}
+.inv-counter{position:absolute;top:12px;right:12px;z-index:4;
+  background:rgba(255,255,255,.18);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.28);color:#fff;font-family:var(--display);
+  font-size:10px;font-weight:700;letter-spacing:.04em;
+  padding:4px 9px;border-radius:20px;transition:opacity .2s ease;
+  text-shadow:0 1px 3px rgba(0,0,0,.4)}
+
+/* ── Card scroll-reveal ──────────────────────────────────── */
+.inv-reveal{opacity:0;transform:translateY(22px);
+  transition:opacity .55s var(--ease),transform .55s var(--ease)}
+.inv-reveal.in{opacity:1;transform:none}
 
 /* ── Card body ───────────────────────────────────────────── */
 .inv-card-body{padding:16px;display:flex;flex-direction:column;flex:1;gap:10px}
