@@ -142,41 +142,50 @@
 <div class="inv-filters" id="inv-filters">
   <div class="wrap">
     <form class="inv-filter-form" id="inv-filter-form" role="search" aria-label="Filter inventory">
-      <div class="inv-search-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input class="inv-search" type="search" id="inv-search" placeholder="Search make or model&hellip;" autocomplete="off" aria-label="Search vehicles">
+      <div class="inv-search-row">
+        <div class="inv-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input class="inv-search" type="search" id="inv-search" placeholder="Search make or model&hellip;" autocomplete="off" aria-label="Search vehicles">
+        </div>
+        <button class="inv-filters-toggle" type="button" id="inv-filters-toggle" aria-expanded="false" aria-controls="inv-selects-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+          Filters
+          <span class="inv-filter-count" id="inv-filter-count" aria-live="polite"></span>
+        </button>
       </div>
-      <select id="inv-cat" class="inv-select" aria-label="Vehicle category">
-        <option value="">All categories</option>
-        <option value="Cars">Cars</option>
-        <option value="Bakkies">Bakkies</option>
-        <option value="Vans">Vans</option>
-      </select>
-      <select id="inv-body" class="inv-select" aria-label="Body type">
-        <option value="">All body types</option>
-        <option value="Hatchback">Hatchback</option>
-        <option value="Sedan">Sedan</option>
-        <option value="Bakkie">Bakkie</option>
-        <option value="Van">Van</option>
-      </select>
-      <select id="inv-price" class="inv-select" aria-label="Price range">
-        <option value="">Any price</option>
-        <option value="u100">Under R100&thinsp;000</option>
-        <option value="100-150">R100&thinsp;000 &ndash; R150&thinsp;000</option>
-        <option value="150-200">R150&thinsp;000 &ndash; R200&thinsp;000</option>
-        <option value="200plus">R200&thinsp;000+</option>
-      </select>
-      <select id="inv-trans" class="inv-select" aria-label="Transmission">
-        <option value="">Any transmission</option>
-        <option value="Manual">Manual</option>
-        <option value="Automatic">Automatic</option>
-      </select>
-      <select id="inv-fuel" class="inv-select" aria-label="Fuel type">
-        <option value="">Any fuel</option>
-        <option value="Petrol">Petrol</option>
-        <option value="Diesel">Diesel</option>
-      </select>
-      <button type="button" class="inv-reset">Reset</button>
+      <div class="inv-selects-wrap" id="inv-selects-wrap">
+        <select id="inv-cat" class="inv-select" aria-label="Vehicle category">
+          <option value="">All categories</option>
+          <option value="Cars">Cars</option>
+          <option value="Bakkies">Bakkies</option>
+          <option value="Vans">Vans</option>
+        </select>
+        <select id="inv-body" class="inv-select" aria-label="Body type">
+          <option value="">All body types</option>
+          <option value="Hatchback">Hatchback</option>
+          <option value="Sedan">Sedan</option>
+          <option value="Bakkie">Bakkie</option>
+          <option value="Van">Van</option>
+        </select>
+        <select id="inv-price" class="inv-select" aria-label="Price range">
+          <option value="">Any price</option>
+          <option value="u100">Under R100&thinsp;000</option>
+          <option value="100-150">R100&thinsp;000 &ndash; R150&thinsp;000</option>
+          <option value="150-200">R150&thinsp;000 &ndash; R200&thinsp;000</option>
+          <option value="200plus">R200&thinsp;000+</option>
+        </select>
+        <select id="inv-trans" class="inv-select" aria-label="Transmission">
+          <option value="">Any transmission</option>
+          <option value="Manual">Manual</option>
+          <option value="Automatic">Automatic</option>
+        </select>
+        <select id="inv-fuel" class="inv-select" aria-label="Fuel type">
+          <option value="">Any fuel</option>
+          <option value="Petrol">Petrol</option>
+          <option value="Diesel">Diesel</option>
+        </select>
+        <button type="button" class="inv-reset">Reset</button>
+      </div>
     </form>
   </div>
 </div>
@@ -279,5 +288,6 @@
 <script src="assets/js/main.js" defer></script>
 <script src="assets/js/coverflow.js" defer></script>
 <script src="assets/js/inventory.js" defer></script>
+<script src="assets/js/finance-wizard.js" defer></script>
 </body>
 </html>

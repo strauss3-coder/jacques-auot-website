@@ -328,6 +328,14 @@
     });
 
     renderGrid(results);
+    updateFilterCount();
+  }
+
+  function updateFilterCount() {
+    var el = document.getElementById('inv-filter-count');
+    if (!el) return;
+    var n = [fCat, fBody, fPrice, fTrans, fFuel].filter(function (e) { return e && e.value; }).length;
+    el.textContent = n > 0 ? String(n) : '';
   }
 
   function resetFilters() {
@@ -391,9 +399,9 @@
           '</div>' +
           (meta ? '<div class="inv-meta">' + meta + '</div>' : '') +
           '<div class="inv-card-actions">' +
-            '<a class="btn btn-wa inv-wa" href="' + waUrl(v) + '" target="_blank" rel="noopener noreferrer">' +
+            '<button class="btn btn-wa inv-wa-btn" type="button" data-id="' + v.id + '">' +
               WA_SVG + 'WhatsApp' +
-            '</a>' +
+            '</button>' +
             '<button class="btn btn-ghost inv-details" type="button" data-id="' + v.id + '">' +
               'View Details' +
             '</button>' +
@@ -624,9 +632,9 @@
               '</div>' : '') +
 
             '<div class="inv-prev-cta">' +
-              '<a class="btn btn-wa" href="' + waUrl(v) + '" target="_blank" rel="noopener noreferrer">' +
+              '<button class="btn btn-wa inv-wa-btn" type="button" data-id="' + v.id + '">' +
                 WA_SVG + ' Enquire on WhatsApp' +
-              '</a>' +
+              '</button>' +
               '<a class="btn btn-dark" href="tel:0722034791">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>' +
                 'Call Us' +
@@ -896,10 +904,143 @@
   }
 
   /* ================================================================
-     § 11 — INIT
+     § 11 — WHATSAPP ENQUIRY MODAL
+     ================================================================ */
+  var waModal   = null;
+  var waVehicle = null;
+
+  function buildWaModal() {
+    var WA_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.4 5 5.1-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8 1-.3.1-.5 0a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2a.4.4 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3A3 3 0 0 0 6 8.6c0 1.8 1.3 3.5 1.5 3.8s2.6 4 6.3 5.3c2.3.8 2.4.5 2.9.5a2.5 2.5 0 0 0 1.7-1.2 2 2 0 0 0 .1-1.2c0-.1-.2-.2-.4-.3z"/></svg>';
+
+    waModal = document.createElement('div');
+    waModal.className = 'inv-wa-modal';
+    waModal.setAttribute('role', 'dialog');
+    waModal.setAttribute('aria-modal', 'true');
+    waModal.setAttribute('aria-label', 'WhatsApp Enquiry');
+    waModal.innerHTML = (
+      '<div class="inv-wa-modal-inner">' +
+        '<button class="inv-wa-modal-close" aria-label="Close">&times;</button>' +
+        '<div class="inv-wa-modal-header">' +
+          '<div class="inv-wa-modal-icon" style="color:#25d366">' + WA_ICON + '</div>' +
+          '<h3 class="inv-wa-modal-title">WhatsApp Enquiry</h3>' +
+          '<p class="inv-wa-vehicle-name" id="inv-wa-vehicle-name"></p>' +
+        '</div>' +
+        '<div class="inv-wa-fields">' +
+          '<div class="inv-wa-field">' +
+            '<label class="inv-wa-label" for="inv-wa-name">Full Name <span style="color:var(--red)">*</span></label>' +
+            '<input class="inv-wa-input" type="text" id="inv-wa-name" placeholder="Your full name" autocomplete="name">' +
+          '</div>' +
+          '<div class="inv-wa-field">' +
+            '<label class="inv-wa-label" for="inv-wa-phone">Phone Number <span style="color:var(--red)">*</span></label>' +
+            '<input class="inv-wa-input" type="tel" id="inv-wa-phone" placeholder="e.g. 072 000 0000" autocomplete="tel">' +
+          '</div>' +
+          '<div class="inv-wa-field">' +
+            '<label class="inv-wa-label" for="inv-wa-msg">Additional Message <span style="font-weight:400;color:var(--muted);font-size:12px">optional</span></label>' +
+            '<textarea class="inv-wa-textarea" id="inv-wa-msg" rows="3" placeholder="Any specific questions about this vehicle?"></textarea>' +
+          '</div>' +
+        '</div>' +
+        '<button class="inv-wa-send" id="inv-wa-send">' +
+          WA_SVG + ' Open WhatsApp' +
+        '</button>' +
+      '</div>'
+    );
+    document.body.appendChild(waModal);
+
+    waModal.querySelector('.inv-wa-modal-close').addEventListener('click', closeWaModal);
+    waModal.addEventListener('click', function (e) { if (e.target === waModal) closeWaModal(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && waModal && waModal.classList.contains('open')) closeWaModal();
+    });
+    document.getElementById('inv-wa-send').addEventListener('click', sendWaEnquiry);
+  }
+
+  function openWaModal(v) {
+    if (!waModal) buildWaModal();
+    waVehicle = v;
+    var labelEl = document.getElementById('inv-wa-vehicle-name');
+    if (labelEl) labelEl.textContent = (v.year ? v.year + ' ' : '') + v.make + ' ' + v.model + (v.priceDisplay ? '  ·  ' + v.priceDisplay : '');
+    ['inv-wa-name','inv-wa-phone','inv-wa-msg'].forEach(function(id) {
+      var el = document.getElementById(id); if (el) { el.value = ''; el.classList.remove('err'); }
+    });
+    waModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function () { var n = document.getElementById('inv-wa-name'); if (n) n.focus(); }, 80);
+  }
+
+  function closeWaModal() {
+    if (!waModal) return;
+    waModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function sendWaEnquiry() {
+    var nameEl  = document.getElementById('inv-wa-name');
+    var phoneEl = document.getElementById('inv-wa-phone');
+    var msgEl   = document.getElementById('inv-wa-msg');
+    var name  = nameEl  ? nameEl.value.trim()  : '';
+    var phone = phoneEl ? phoneEl.value.trim() : '';
+    var msg   = msgEl   ? msgEl.value.trim()   : '';
+    var ok = true;
+    if (!name)  { if (nameEl)  nameEl.classList.add('err');  ok = false; }
+    if (!phone) { if (phoneEl) phoneEl.classList.add('err'); ok = false; }
+    if (!ok) return;
+    var v = waVehicle;
+    var vehicleName = (v.year ? v.year + ' ' : '') + v.make + ' ' + v.model;
+    var text = [
+      'Vehicle Enquiry',
+      '',
+      'Vehicle: ' + vehicleName,
+      'Price: '   + (v.priceDisplay || 'Contact for price'),
+      '',
+      'Name: '  + name,
+      'Phone: ' + phone,
+      '',
+      'Additional Information:',
+      msg || 'None',
+      '',
+      'I would like more information regarding this vehicle.',
+    ].join('\n');
+    window.open('https://wa.me/27722034791?text=' + encodeURIComponent(text), '_blank', 'noopener,noreferrer');
+    closeWaModal();
+  }
+
+  /* document-level delegation — catches all .inv-wa-btn clicks on any container */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.inv-wa-btn');
+    if (!btn) return;
+    var v = vehicleById(btn.dataset.id);
+    if (v) openWaModal(v);
+  });
+
+  /* ================================================================
+     § 12 — MOBILE FILTER TOGGLE
+     ================================================================ */
+  function initFilterToggle() {
+    var toggleBtn   = document.getElementById('inv-filters-toggle');
+    var selectsWrap = document.getElementById('inv-selects-wrap');
+    if (!toggleBtn || !selectsWrap) return;
+
+    toggleBtn.addEventListener('click', function () {
+      var open = selectsWrap.classList.toggle('open');
+      toggleBtn.setAttribute('aria-expanded', String(open));
+    });
+
+    /* close selects wrap when user resets filters */
+    var resetBtns = document.querySelectorAll('.inv-reset');
+    resetBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        selectsWrap.classList.remove('open');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  /* ================================================================
+     § 13 — INIT
      ================================================================ */
   if (teaserEl) renderTeaserGrid();
   if (gridEl)   { bindCarouselEvents(gridEl); renderGrid(INVENTORY); }
   initFilterScroll();
+  initFilterToggle();
 
 })();

@@ -132,28 +132,165 @@
   </ol></nav>
 <section class="page-hero wrap reveal">
   <span class="eyebrow">Vehicle finance</span>
-  <h1>Finance &mdash; we make it possible.</h1>
-  <p>Don&rsquo;t have the cash up front? No problem. We help you apply for vehicle finance through trusted lenders and walk you through every step, start to finish.</p>
+  <h1>Apply for Finance.</h1>
+  <p>Complete the form in under two minutes and our team will reach out within 24 hours to walk you through the process, start to finish.</p>
 </section>
 
-<section class="section finance" aria-labelledby="finance-card-heading">
-  <div class="wrap"><div class="finance-card">
-    <div class="finance-grid">
-      <div class="reveal">
-        <h2 id="finance-card-heading">Get approved &amp; <em>drive away.</em></h2>
-        <p>We work directly with the banks on your behalf, so you don&rsquo;t have to deal with the paperwork alone.</p>
-        <a href="contact.html?interest=finance" class="btn btn-primary">Apply for Finance<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+<!-- ===================== FINANCE WIZARD ===================== -->
+<section class="section" aria-label="Finance application form">
+  <div class="wrap">
+    <div class="fw-wrap reveal" id="fw">
+
+      <!-- Progress indicator -->
+      <nav class="fw-progress" aria-label="Application progress">
+        <div class="fw-progress-track"><div class="fw-bar" id="fw-bar" style="width:0%"></div></div>
+        <ol class="fw-steps" role="list">
+          <li class="fw-step" data-step="1"><span class="fw-step-num">1</span><span class="fw-step-name">Personal</span></li>
+          <li class="fw-step" data-step="2"><span class="fw-step-num">2</span><span class="fw-step-name">Employment</span></li>
+          <li class="fw-step" data-step="3"><span class="fw-step-num">3</span><span class="fw-step-name">Finance</span></li>
+          <li class="fw-step" data-step="4"><span class="fw-step-num">4</span><span class="fw-step-name">Review</span></li>
+        </ol>
+      </nav>
+
+      <!-- STEP 1 — Personal Information -->
+      <div class="fw-panel" data-step="1">
+        <h2 class="fw-heading">Personal Information</h2>
+        <p class="fw-sub">Tell us about yourself so we can process your application.</p>
+        <div class="fw-grid">
+          <div class="fw-field">
+            <label class="fw-label" for="fw-name">Full Name <span class="fw-req">*</span></label>
+            <input class="fw-input" type="text" id="fw-name" placeholder="e.g. Thabo Nkosi" autocomplete="name" required>
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-phone">Phone Number <span class="fw-req">*</span></label>
+            <input class="fw-input" type="tel" id="fw-phone" placeholder="e.g. 072 000 0000" autocomplete="tel" required>
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-email">Email Address <span class="fw-req">*</span></label>
+            <input class="fw-input" type="email" id="fw-email" placeholder="e.g. you@example.com" autocomplete="email" required>
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-id">ID Number <span class="fw-opt">optional</span></label>
+            <input class="fw-input" type="text" id="fw-id" placeholder="Your SA ID number" autocomplete="off">
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-province">Province</label>
+            <select class="fw-select" id="fw-province">
+              <option value="">Select province</option>
+              <option>Mpumalanga</option><option>Gauteng</option><option>Limpopo</option>
+              <option>KwaZulu-Natal</option><option>Western Cape</option><option>Eastern Cape</option>
+              <option>Northern Cape</option><option>North West</option><option>Free State</option>
+            </select>
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-city">City / Town</label>
+            <input class="fw-input" type="text" id="fw-city" placeholder="e.g. eMalahleni" autocomplete="address-level2">
+          </div>
+        </div>
+        <div class="fw-actions">
+          <button class="btn btn-primary fw-next" type="button" data-step="1">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
       </div>
-      <ul class="finance-list reveal" data-delay="1">
-        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Quick, easy application</li>
-        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>We deal with the banks for you</li>
-        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Trade-in value towards your deposit</li>
-        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Get approved &amp; drive away</li>
-      </ul>
-    </div>
-  </div></div>
+
+      <!-- STEP 2 — Employment Information -->
+      <div class="fw-panel" data-step="2">
+        <h2 class="fw-heading">Employment Information</h2>
+        <p class="fw-sub">Help us understand your employment situation to find the right finance option.</p>
+        <div class="fw-grid">
+          <div class="fw-field fw-field--wide">
+            <label class="fw-label" for="fw-status">Employment Status <span class="fw-req">*</span></label>
+            <select class="fw-select" id="fw-status" required>
+              <option value="">Select status</option>
+              <option>Permanently Employed</option><option>Contract / Fixed-Term</option>
+              <option>Self-Employed</option><option>Part-Time Employed</option>
+              <option>Pensioner / Retired</option><option>Unemployed</option>
+            </select>
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-employer">Employer / Company</label>
+            <input class="fw-input" type="text" id="fw-employer" placeholder="e.g. City of eMalahleni" autocomplete="organization">
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-occupation">Occupation / Job Title</label>
+            <input class="fw-input" type="text" id="fw-occupation" placeholder="e.g. Teacher">
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-income">Gross Monthly Income (R) <span class="fw-req">*</span></label>
+            <input class="fw-input" type="number" id="fw-income" placeholder="e.g. 18000" min="0" required>
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-tenure">Time at Current Employer</label>
+            <select class="fw-select" id="fw-tenure">
+              <option value="">Select duration</option>
+              <option>Less than 6 months</option><option>6 months &ndash; 1 year</option>
+              <option>1 &ndash; 2 years</option><option>2 &ndash; 5 years</option>
+              <option>5 &ndash; 10 years</option><option>More than 10 years</option>
+            </select>
+          </div>
+        </div>
+        <div class="fw-actions">
+          <button class="fw-back" type="button" data-step="2">Back</button>
+          <button class="btn btn-primary fw-next" type="button" data-step="2">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+
+      <!-- STEP 3 — Finance Information -->
+      <div class="fw-panel" data-step="3">
+        <h2 class="fw-heading">Finance Information</h2>
+        <p class="fw-sub">Tell us about the vehicle and how you&rsquo;d like to structure your finance.</p>
+        <div class="fw-grid">
+          <div class="fw-field fw-field--wide">
+            <label class="fw-label" for="fw-vehicle">Vehicle Interested In <span class="fw-req">*</span></label>
+            <select class="fw-select" id="fw-vehicle" required>
+              <option value="">Select vehicle</option>
+              <option>2024 Volkswagen Polo 1.4i Vivo &ndash; R259&thinsp;900</option>
+              <option>2023 Suzuki Swift 1.2i GA &ndash; R189&thinsp;900</option>
+              <option>2022 Mahindra Pik Up 2.2Tdi S/C &ndash; R209&thinsp;900</option>
+              <option>2020 Hyundai H-100 2.6i &ndash; R189&thinsp;900</option>
+              <option>2016 Hyundai i10 1.1i Motion &ndash; R109&thinsp;900</option>
+              <option>2015 Ford Ranger 2.5i C/C &ndash; R159&thinsp;900</option>
+              <option>2014 BMW 320d &ndash; R189&thinsp;900</option>
+              <option>2012 Nissan NP200 1.6i &ndash; R149&thinsp;900</option>
+              <option>2009 Volkswagen Polo 1.6i Comfortline &ndash; R109&thinsp;900</option>
+              <option>2005 Toyota Hilux 2.7VVti R/B S/C &ndash; R209&thinsp;900</option>
+              <option>Other (specify in notes)</option>
+            </select>
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-deposit">Deposit Amount (R)</label>
+            <input class="fw-input" type="number" id="fw-deposit" placeholder="e.g. 10000" min="0">
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-tradein">Trade-In Vehicle?</label>
+            <select class="fw-select" id="fw-tradein">
+              <option value="">Select option</option>
+              <option value="Yes">Yes &mdash; I have a trade-in</option>
+              <option value="No">No trade-in</option>
+            </select>
+          </div>
+          <div class="fw-field">
+            <label class="fw-label" for="fw-budget">Preferred Monthly Budget (R)</label>
+            <input class="fw-input" type="number" id="fw-budget" placeholder="e.g. 4500" min="0">
+          </div>
+          <div class="fw-field fw-field--wide">
+            <label class="fw-label" for="fw-notes">Additional Notes <span class="fw-opt">optional</span></label>
+            <textarea class="fw-textarea" id="fw-notes" placeholder="Any other questions, preferences or vehicle details&hellip;"></textarea>
+          </div>
+        </div>
+        <div class="fw-actions">
+          <button class="fw-back" type="button" data-step="3">Back</button>
+          <button class="btn btn-primary fw-next" type="button" data-step="3">Review Application <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+
+      <!-- STEP 4 — Review (built dynamically by finance-wizard.js) -->
+      <div class="fw-panel" data-step="4"></div>
+
+    </div><!-- /fw-wrap -->
+  </div>
 </section>
 
+<!-- ===================== HOW IT WORKS ===================== -->
 <section class="section" aria-labelledby="process-heading">
   <div class="wrap">
     <div class="section-head reveal">
@@ -162,7 +299,7 @@
     </div>
     <div class="finance-steps">
       <div class="finance-step reveal"><b>Step 1</b><h3>Choose a vehicle</h3><p>Browse our inventory or visit the lot in Klipfontein.</p></div>
-      <div class="finance-step reveal" data-delay="1"><b>Step 2</b><h3>Apply</h3><p>Fill in our simple enquiry form &mdash; takes a few minutes.</p></div>
+      <div class="finance-step reveal" data-delay="1"><b>Step 2</b><h3>Apply online</h3><p>Complete the form above &mdash; takes under two minutes.</p></div>
       <div class="finance-step reveal" data-delay="2"><b>Step 3</b><h3>We deal with the banks</h3><p>Our team submits your application to trusted lenders.</p></div>
       <div class="finance-step reveal" data-delay="3"><b>Step 4</b><h3>Drive away</h3><p>Once approved, sign and collect your vehicle.</p></div>
     </div>
@@ -239,5 +376,6 @@
 <script src="assets/js/main.js" defer></script>
 <script src="assets/js/coverflow.js" defer></script>
 <script src="assets/js/inventory.js" defer></script>
+<script src="assets/js/finance-wizard.js" defer></script>
 </body>
 </html>
