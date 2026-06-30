@@ -107,42 +107,23 @@
       (v.price ? ' (' + v.price + ')' : '') +
       '. Can you share more details and availability?'
     );
-    var wa   = 'https://wa.me/27722034791?text=' + msg;
-    var init = v.title.split(' ').slice(0, 2).map(function (w) {
-      return w[0] || '';
-    }).join('').toUpperCase();
+    var wa = 'https://wa.me/27722034791?text=' + msg;
 
     return (
       '<div class="cf-inner">' +
         '<div class="cf-img-wrap">' +
           '<img src="' + v.img + '" alt="' + v.alt + '" loading="lazy">' +
-          '<div class="cf-ph" aria-hidden="true">' + init + '</div>' +
+          '<div class="cf-ph" aria-hidden="true"></div>' +
         '</div>' +
-        '<div class="cf-label">' + v.title + '</div>' +
-        '<div class="cf-glass">' +
-          '<div class="cf-glass-row">' +
-            '<span class="cf-price">' + v.price + '</span>' +
-            '<span class="cf-badge">Finance Available</span>' +
-          '</div>' +
-          '<div class="cf-meta">' +
-            (v.year ? v.year + ' &middot; ' : '') + v.km +
-            (v.tag  ? ' &middot; ' + v.tag  : '') +
-          '</div>' +
-          '<a class="btn btn-wa cf-wa" href="' + wa +
+        '<div class="cf-actions">' +
+          '<a class="btn btn-wa cf-action-btn" href="' + wa +
              '" target="_blank" rel="noopener noreferrer">' +
-            '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
-              '<path d="M12 2a10 10 0 0 0-8.6 15l-1.4 5 5.1-1.3A10 10 0 1 0 12' +
-              ' 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12' +
-              ' 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8 1-.3.1-.5' +
-              ' 0a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2a.4.4 0 0 0 0-.4l-.8' +
-              '-1.9c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3A3 3 0 0 0 6 8.6c0' +
-              ' 1.8 1.3 3.5 1.5 3.8s2.6 4 6.3 5.3c2.3.8 2.4.5 2.9.5a2.5 2.5' +
-              ' 0 0 0 1.7-1.2 2 2 0 0 0 .1-1.2c0-.1-.2-.2-.4-.3z"/>' +
+            '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">' +
+              '<path d="M12 2a10 10 0 0 0-8.6 15l-1.4 5 5.1-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8 1-.3.1-.5 0a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2a.4.4 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3A3 3 0 0 0 6 8.6c0 1.8 1.3 3.5 1.5 3.8s2.6 4 6.3 5.3c2.3.8 2.4.5 2.9.5a2.5 2.5 0 0 0 1.7-1.2 2 2 0 0 0 .1-1.2c0-.1-.2-.2-.4-.3z"/>' +
             '</svg>' +
-            'Enquire on WhatsApp' +
+            'Enquire' +
           '</a>' +
-          /* ── "View Full Poster" — secondary action in glass panel */
-          '<button class="cf-view-btn" type="button">View full poster</button>' +
+          '<button class="btn cf-action-btn cf-action-ghost cf-view-btn" type="button">View Poster</button>' +
         '</div>' +
       '</div>'
     );
@@ -210,14 +191,12 @@
 
       card.classList.toggle('cf-active', abs < 0.15);
 
-      var glass = card.querySelector('.cf-glass');
-      if (glass) {
-        glass.style.opacity       = p.glassOp;
-        glass.style.transform     = 'translateY(' + (1 - p.glassOp) * 8 + 'px)';
-        glass.style.pointerEvents = p.glassOp > 0.1 ? 'auto' : 'none';
+      var actions = card.querySelector('.cf-actions');
+      if (actions) {
+        actions.style.opacity       = p.glassOp;
+        actions.style.transform     = 'translateY(' + (1 - p.glassOp) * 8 + 'px)';
+        actions.style.pointerEvents = p.glassOp > 0.1 ? 'auto' : 'none';
       }
-      var label = card.querySelector('.cf-label');
-      if (label) label.style.opacity = p.labelOp;
 
       if (abs < minDist) { minDist = abs; activeIdx = i; }
     });
