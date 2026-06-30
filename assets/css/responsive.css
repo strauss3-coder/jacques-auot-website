@@ -27,6 +27,7 @@
 @media(max-width:1023px){
   .sv-layout{grid-template-columns:1fr;gap:36px}
   .ct-map{aspect-ratio:16/7}
+  .trust-strip-grid{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:640px){
   .rv-outer{padding:0 0}        /* arrows hidden on small mobile — swipe only */
@@ -41,6 +42,9 @@
   .ct-trust-badge{font-size:11.5px}
   .ct-map{aspect-ratio:4/3}
   .ct-map-actions{flex-direction:column;align-items:flex-start;gap:10px}
+  .trust-strip-grid{grid-template-columns:1fr}
+  .trust-card{padding:24px 20px}
+  .ct-right{gap:16px}
 }
 @media(min-width:641px) and (max-width:1023px){
   .rv-outer{padding:0 48px}     /* show arrows, 2 cards visible */
