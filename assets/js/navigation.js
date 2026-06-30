@@ -37,4 +37,16 @@
       if (e.key === 'Escape') closeMenu();
     });
   }
+  /* scroll-spy: highlight "Sell Your Vehicle" link when #sell section is visible */
+  var sellSection = document.getElementById('sell');
+  var sellLinks   = document.querySelectorAll('a.nav-sell');
+  if (sellSection && sellLinks.length && 'IntersectionObserver' in window) {
+    var sellObserver = new IntersectionObserver(function (entries) {
+      var visible = entries[0].isIntersecting;
+      sellLinks.forEach(function (a) {
+        a.setAttribute('aria-current', visible ? 'section' : 'false');
+      });
+    }, { threshold: 0.25 });
+    sellObserver.observe(sellSection);
+  }
 })();

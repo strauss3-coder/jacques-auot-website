@@ -26,6 +26,7 @@
 }
 @media(max-width:1023px){
   .sv-layout{grid-template-columns:1fr;gap:36px}
+  .ct-map{aspect-ratio:16/7}
 }
 @media(max-width:640px){
   .rv-outer{padding:0 0}        /* arrows hidden on small mobile — swipe only */
@@ -34,8 +35,12 @@
   .sv-field--full{grid-column:auto}
   .sv-trust-badge{font-size:11px;gap:5px;padding:11px 6px}
   .sv-panel{padding:20px 18px}
+  .eq-panel{padding:20px 18px}
   .sv-btns{flex-wrap:wrap}
   .sv-btns .btn{flex:1;justify-content:center}
+  .ct-trust-badge{font-size:11.5px}
+  .ct-map{aspect-ratio:4/3}
+  .ct-map-actions{flex-direction:column;align-items:flex-start;gap:10px}
 }
 @media(min-width:641px) and (max-width:1023px){
   .rv-outer{padding:0 48px}     /* show arrows, 2 cards visible */

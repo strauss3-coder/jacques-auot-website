@@ -990,3 +990,76 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   background:var(--bg-2);border-radius:var(--r-sm);padding:11px 15px;
   font-size:13px;color:var(--muted);margin-bottom:20px}
 .sv-response-banner svg{color:var(--red);flex:none}
+
+/* =========================================================
+   CONTACT — premium cards, enquiry wizard, map, closing
+   ========================================================= */
+
+/* trust badges */
+.ct-trust{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.ct-trust-badge{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;
+  border-radius:99px;background:var(--surface);border:1px solid var(--border);
+  font-family:var(--display);font-size:12px;font-weight:700;color:var(--muted);
+  background-image:var(--carbon)}
+.ct-trust-badge svg{color:var(--red);flex:none}
+
+/* cards column */
+.ct-cards{display:flex;flex-direction:column;gap:14px}
+
+.ct-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:22px 24px;background-image:var(--carbon);
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease),border-color .4s var(--ease)}
+.ct-card:hover{transform:translateY(-4px);border-color:var(--red-soft);
+  box-shadow:0 0 0 1px var(--red-soft),var(--shadow-lg)}
+
+.ct-card-head{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.ct-card-ic{width:44px;height:44px;border-radius:12px;flex:none;display:flex;
+  align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(220,26,38,.1),rgba(220,26,38,.04));
+  border:1px solid var(--red-soft)}
+.ct-card-ic svg{width:20px;height:20px;color:var(--red)}
+.ct-card-ic--wa{background:linear-gradient(135deg,rgba(31,175,84,.14),rgba(31,175,84,.06));
+  border-color:rgba(31,175,84,.35)}
+.ct-card-ic--wa svg{color:#1faf54}
+.ct-card h3{font-family:var(--display);font-size:15px;font-weight:700;
+  color:var(--ink);margin:0;line-height:1.2}
+.ct-card-value{font-family:var(--display);font-size:15px;font-weight:600;
+  color:var(--red);display:block;margin-top:2px;transition:color .2s}
+.ct-card-value:hover{color:var(--red-2)}
+.ct-card-value--sm{font-size:13px}
+.ct-card-sub{font-size:12.5px;color:var(--faint);display:block;margin-top:2px}
+.ct-card>p{font-size:13.5px;color:var(--muted);margin-bottom:14px;line-height:1.52}
+.ct-btn{width:100%;justify-content:center}
+
+/* trading hours */
+.ct-card--hours .ct-card-head{margin-bottom:14px}
+.ct-hours{display:flex;flex-direction:column}
+.ct-hours>div{display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--border);font-size:13.5px}
+.ct-hours>div:last-child{border-bottom:none}
+.ct-hours dt{color:var(--muted)}
+.ct-hours dd{font-weight:700;color:var(--ink);font-family:var(--display);font-size:13px}
+
+/* enquiry wizard */
+.eq-wrap{background:var(--surface);border-radius:var(--r-lg);border:1px solid var(--border);
+  box-shadow:var(--shadow-lg);overflow:hidden;background-image:var(--carbon)}
+.eq-panel{display:none;padding:28px}
+.eq-panel--active{display:block;animation:svIn .3s var(--ease) both}
+
+/* map */
+.ct-map-wrap{margin-top:40px}
+.ct-map{aspect-ratio:21/6;border-radius:var(--r-lg);border:1px solid var(--border);
+  overflow:hidden;box-shadow:var(--shadow);background:var(--bg-2);position:relative}
+.ct-map iframe{width:100%;height:100%;border:0;display:block}
+.ct-map-actions{display:flex;align-items:center;gap:18px;margin-top:16px;flex-wrap:wrap}
+.ct-map-address{font-size:13.5px;color:var(--muted)}
+
+/* nav sell highlight */
+.nav-links .nav-sell[aria-current="section"]{color:var(--red);font-weight:700}
+.mobile-menu .nav-sell[aria-current="section"]{color:var(--red)}
+
+/* closing statement */
+.ct-closing{background:var(--ink);padding:56px 0;background-image:var(--carbon)}
+.ct-closing-text{font-family:var(--display);font-size:clamp(17px,2.2vw,24px);
+  font-weight:600;color:rgba(255,255,255,.86);line-height:1.55;letter-spacing:-.01em;
+  text-align:center;max-width:700px;margin:0 auto}
