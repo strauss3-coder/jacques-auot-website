@@ -326,18 +326,22 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .rv-outer{position:relative;padding:0 52px}
 
 /* ── Viewport + track ─── */
-.rv-carousel{overflow:hidden;border-radius:var(--r)}
+/* padding gives breathing room so active-card lift (-5px) isn't clipped by overflow:hidden */
+.rv-carousel{overflow:hidden;border-radius:var(--r);padding:8px 0}
 .rv-track{display:flex;user-select:none;cursor:grab;will-change:transform;
+  min-height:240px;
   transition:transform .6s cubic-bezier(.25,.46,.45,.94)}
 .rv-track.rv-dragging{cursor:grabbing;transition:none!important}
 
 /* ── Review card ─── */
-.rv-card{flex:none;padding:0 10px;box-sizing:border-box;
+/* flex column wrapper so rv-card-inner can use flex:1 instead of height:100%
+   (height:100% in a flex-stretched item has circular-dependency issues in some browsers) */
+.rv-card{flex:none;padding:0 10px;box-sizing:border-box;display:flex;flex-direction:column;
   opacity:.6;transition:opacity .5s ease}
 .rv-card--active{opacity:1}
 .rv-card--adj{opacity:.82}
 .rv-card-inner{background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:28px;height:100%;display:flex;
+  border-radius:var(--r);padding:28px;flex:1;min-height:0;display:flex;
   flex-direction:column;gap:14px;box-shadow:0 6px 28px -16px rgba(20,28,45,.28);
   transition:transform .5s var(--ease),box-shadow .5s var(--ease),border-color .5s var(--ease);
   background-image:var(--carbon)}
