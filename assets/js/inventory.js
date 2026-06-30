@@ -115,6 +115,7 @@
     /* ── 5. Mahindra Pik Up 2.2Tdi S/C ──────────────────────────── */
     {
       id:          'mahindra',
+      featured:    true,
       folder:      'assets/images/inventory/mahindra',
       images:      ['1.jpg','2..jpeg','3..jpeg','4..jpeg','5..jpeg'],
       make:        'Mahindra',
@@ -159,6 +160,7 @@
     /* ── 7. VW Polo 1.4i Vivo (2024) ────────────────────────────── */
     {
       id:          'polo-vivo',
+      featured:    true,
       folder:      'assets/images/inventory/polo-vivo',
       images:      ['1.jpg','2..jpeg','3..jpeg','4..jpeg','5..jpeg'],
       make:        'Volkswagen',
@@ -181,6 +183,7 @@
     /* ── 8. Suzuki Swift 1.2i GA ─────────────────────────────────── */
     {
       id:          'suzuki-swift',
+      featured:    true,
       folder:      'assets/images/inventory/suzuki-swift',
       images:      ['1.jpg','2..jpeg','3..jpeg','4..jpeg','5..jpeg'],
       make:        'Suzuki',
@@ -266,14 +269,17 @@
      § 2 — DOM REFERENCES
      ================================================================ */
   var gridEl     = document.getElementById('inv-grid');
+  var teaserEl   = document.getElementById('inv-teaser-grid');
+  var filterBar  = document.querySelector('.inv-filters');
   var countEl    = document.getElementById('inv-count');
   var emptyEl    = document.getElementById('inv-empty');
   var previewEl  = document.getElementById('inv-preview');
   var filterForm = document.getElementById('inv-filter-form');
 
-  if (!gridEl) return;   /* safety — only runs on inventory page */
+  /* runs on inventory page (gridEl) or homepage teaser (teaserEl) */
+  if (!gridEl && !teaserEl) return;
 
-  /* filter inputs */
+  /* filter inputs — inventory page only */
   var fSearch = document.getElementById('inv-search');
   var fCat    = document.getElementById('inv-cat');
   var fBody   = document.getElementById('inv-body');
@@ -442,9 +448,8 @@
   }
 
   /* ================================================================
-     § 7 — CARD IMAGE CAROUSEL  (event delegation on grid)
+     § 7 — CARD IMAGE CAROUSEL
      ================================================================ */
-  /* move carousel to index idx */
   function carouselTo(imgEl, idx) {
     var n = parseInt(imgEl.dataset.n || '1');
     idx = ((idx % n) + n) % n;
@@ -456,78 +461,72 @@
     });
   }
 
-  /* arrow buttons (delegated) */
-  gridEl.addEventListener('click', function (e) {
-    var btn = e.target.closest('.inv-arr');
-    if (!btn) return;
-    e.stopPropagation();
-    var imgEl = btn.closest('.inv-imgs');
-    if (!imgEl) return;
-    var cur = parseInt(imgEl.dataset.idx || '0');
-    carouselTo(imgEl, cur + (btn.classList.contains('inv-arr-next') ? 1 : -1));
-  });
-
-  /* dot click */
-  gridEl.addEventListener('click', function (e) {
-    var dot = e.target.closest('.inv-dot');
-    if (!dot) return;
-    var imgEl = dot.closest('.inv-imgs');
-    if (!imgEl) return;
-    carouselTo(imgEl, parseInt(dot.dataset.i));
-  });
-
-  /* touch swipe on image area */
+  /* shared touch state — safe across multiple containers via imgEl ref */
   var cTouchState = null;
 
-  gridEl.addEventListener('touchstart', function (e) {
-    var imgEl = e.target.closest('.inv-imgs');
-    if (!imgEl || e.touches.length > 1) return;
-    cTouchState = {
-      imgEl:  imgEl,
-      startX: e.touches[0].clientX,
-      startY: e.touches[0].clientY,
-      startIdx: parseInt(imgEl.dataset.idx || '0'),
-      dir:    null,
-    };
-  }, { passive: true });
+  /* bind all carousel events to a container element (grid or teaser) */
+  function bindCarouselEvents(el) {
+    el.addEventListener('click', function (e) {
+      var btn = e.target.closest('.inv-arr');
+      if (!btn) return;
+      e.stopPropagation();
+      var imgEl = btn.closest('.inv-imgs');
+      if (!imgEl) return;
+      carouselTo(imgEl, parseInt(imgEl.dataset.idx || '0') + (btn.classList.contains('inv-arr-next') ? 1 : -1));
+    });
 
-  gridEl.addEventListener('touchmove', function (e) {
-    if (!cTouchState) return;
-    var t  = e.touches[0];
-    var dx = t.clientX - cTouchState.startX;
-    var dy = t.clientY - cTouchState.startY;
+    el.addEventListener('click', function (e) {
+      var dot = e.target.closest('.inv-dot');
+      if (!dot) return;
+      var imgEl = dot.closest('.inv-imgs');
+      if (!imgEl) return;
+      carouselTo(imgEl, parseInt(dot.dataset.i));
+    });
 
-    if (!cTouchState.dir) {
-      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-        cTouchState.dir = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+    el.addEventListener('touchstart', function (e) {
+      var imgEl = e.target.closest('.inv-imgs');
+      if (!imgEl || e.touches.length > 1) return;
+      cTouchState = {
+        imgEl:    imgEl,
+        startX:   e.touches[0].clientX,
+        startY:   e.touches[0].clientY,
+        startIdx: parseInt(imgEl.dataset.idx || '0'),
+        dir:      null,
+      };
+    }, { passive: true });
+
+    el.addEventListener('touchmove', function (e) {
+      if (!cTouchState) return;
+      var t  = e.touches[0];
+      var dx = t.clientX - cTouchState.startX;
+      var dy = t.clientY - cTouchState.startY;
+      if (!cTouchState.dir) {
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+          cTouchState.dir = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+        }
+        return;
       }
-      return;
-    }
-    if (cTouchState.dir !== 'x') return;
+      if (cTouchState.dir !== 'x') return;
+      e.preventDefault();
+      var n     = parseInt(cTouchState.imgEl.dataset.n || '1');
+      var track = cTouchState.imgEl.querySelector('.inv-imgs-track');
+      if (!track) return;
+      var base  = -(cTouchState.startIdx * (100 / n));
+      var delta = (dx / cTouchState.imgEl.offsetWidth) * (100 / n);
+      track.style.transition = 'none';
+      track.style.transform  = 'translateX(' + (base + delta) + '%)';
+    }, { passive: false });
 
-    e.preventDefault();
-
-    /* live drag — shift track without snapping */
-    var n     = parseInt(cTouchState.imgEl.dataset.n || '1');
-    var track = cTouchState.imgEl.querySelector('.inv-imgs-track');
-    if (!track) return;
-    var base   = -(cTouchState.startIdx * (100 / n));
-    var delta  = (dx / cTouchState.imgEl.offsetWidth) * (100 / n);
-    track.style.transition = 'none';
-    track.style.transform  = 'translateX(' + (base + delta) + '%)';
-  }, { passive: false });
-
-  gridEl.addEventListener('touchend', function (e) {
-    if (!cTouchState || cTouchState.dir !== 'x') { cTouchState = null; return; }
-    var dx = e.changedTouches[0].clientX - cTouchState.startX;
-    var imgEl = cTouchState.imgEl;
-    var track = imgEl.querySelector('.inv-imgs-track');
-
-    if (track) track.style.transition = '';   /* restore CSS transition */
-    var newIdx = cTouchState.startIdx + (dx < -48 ? 1 : dx > 48 ? -1 : 0);
-    carouselTo(imgEl, newIdx);
-    cTouchState = null;
-  }, { passive: true });
+    el.addEventListener('touchend', function (e) {
+      if (!cTouchState || cTouchState.dir !== 'x') { cTouchState = null; return; }
+      var dx    = e.changedTouches[0].clientX - cTouchState.startX;
+      var imgEl = cTouchState.imgEl;
+      var track = imgEl.querySelector('.inv-imgs-track');
+      if (track) track.style.transition = '';
+      carouselTo(imgEl, cTouchState.startIdx + (dx < -48 ? 1 : dx > 48 ? -1 : 0));
+      cTouchState = null;
+    }, { passive: true });
+  }
 
   /* ================================================================
      § 8 — PREVIEW SECTION
@@ -703,13 +702,45 @@
     }, { passive: true });
   }
 
-  /* "View Details" delegated click */
-  gridEl.addEventListener('click', function (e) {
-    var btn = e.target.closest('.inv-details');
-    if (!btn) return;
-    var v = vehicleById(btn.dataset.id);
-    if (v) showPreview(v);
-  });
+  /* "View Details" — inventory page: open preview panel */
+  if (gridEl) {
+    gridEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('.inv-details');
+      if (!btn) return;
+      var v = vehicleById(btn.dataset.id);
+      if (v) showPreview(v);
+    });
+  }
+
+  /* "View Details" — homepage teaser: navigate to inventory page */
+  if (teaserEl) {
+    teaserEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('.inv-details');
+      if (!btn) return;
+      window.location.href = 'inventory.html';
+    });
+  }
+
+  /* ================================================================
+     § 8b — TEASER GRID RENDERER (homepage featured vehicles)
+     ================================================================ */
+  function renderTeaserGrid() {
+    if (!teaserEl) return;
+    var featured = INVENTORY.filter(function (v) { return v.featured; });
+    if (!featured.length) return;
+    teaserEl.innerHTML = featured.map(buildCard).join('');
+    bindCarouselEvents(teaserEl);
+    if ('IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      teaserEl.querySelectorAll('.inv-reveal').forEach(function (el) { obs.observe(el); });
+    } else {
+      teaserEl.querySelectorAll('.inv-reveal').forEach(function (el) { el.classList.add('in'); });
+    }
+  }
 
   /* ================================================================
      § 9 — LIGHTBOX (full-res images from preview)
@@ -810,6 +841,43 @@
   }
 
   /* ================================================================
+     § 9b — MOBILE FILTER BAR: HIDE ON SCROLL DOWN, SHOW ON SCROLL UP
+     Uses transform: translateY() for 60fps — no layout shifts.
+     Only activates on mobile (≤900px); desktop keeps sticky behaviour.
+     ================================================================ */
+  function initFilterScroll() {
+    if (!filterBar) return;
+    var lastY   = window.scrollY;
+    var ticking = false;
+
+    function update() {
+      if (window.innerWidth > 900) {
+        /* desktop — always visible */
+        filterBar.classList.remove('inv-filters--hidden');
+        ticking = false;
+        return;
+      }
+      var y = window.scrollY;
+      if (y > lastY && y > 120) {
+        filterBar.classList.add('inv-filters--hidden');
+      } else {
+        filterBar.classList.remove('inv-filters--hidden');
+      }
+      lastY   = y;
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function () {
+      if (!ticking) { requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+
+    /* also reset on resize crossing breakpoint */
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 900) filterBar.classList.remove('inv-filters--hidden');
+    }, { passive: true });
+  }
+
+  /* ================================================================
      § 10 — FILTER BAR EVENT BINDINGS
      ================================================================ */
   if (filterForm) {
@@ -830,6 +898,8 @@
   /* ================================================================
      § 11 — INIT
      ================================================================ */
-  renderGrid(INVENTORY);
+  if (teaserEl) renderTeaserGrid();
+  if (gridEl)   { bindCarouselEvents(gridEl); renderGrid(INVENTORY); }
+  initFilterScroll();
 
 })();
